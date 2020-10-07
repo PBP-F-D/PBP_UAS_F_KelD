@@ -12,6 +12,8 @@ import com.bumptech.glide.Glide;
 
 import java.io.Serializable;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 @Entity
 public class Cart implements Serializable {
     @PrimaryKey(autoGenerate = true)
@@ -92,9 +94,9 @@ public class Cart implements Serializable {
     }
 
     @BindingAdapter("cImage")
-    public static void loadImage(ImageView view, String imgUrlC) {
-        Glide.with(view.getContext())
+    public static void loadImage(CircleImageView circleImageView, String imgUrlC) {
+        Glide.with(circleImageView.getContext())
                 .load(imgUrlC)
-                .into(view);
+                .into(circleImageView);
     }
 }

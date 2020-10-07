@@ -16,72 +16,86 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/rootView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_margin="20dp"
         android:background="@color/colorAccent"
         android:orientation="horizontal">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profile_image"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_marginStart="16dp"
-                app:civ_border_color="#009688"
-                app:civ_border_width="2dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:pImage="@{cart.getImgUrlC()}"
-                tools:src="@android:color/darker_gray" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/removeItem"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="@string/removecart"
+            android:layout_marginEnd="4dp"
+            android:textSize="10sp"
+            app:flow_horizontalAlign="end"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="MissingConstraints" />
 
-            <TextView
-                android:id="@+id/tv_namaProduk"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:fontFamily="@font/raleway_medium"
-                app:layout_constraintStart_toEndOf="@+id/profile_image"
-                app:layout_constraintTop_toTopOf="parent"
-                android:text="@{cart.namaB}"
-                tools:text="Nama Produk" />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            app:civ_border_color="#009688"
+            app:civ_border_width="2dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:cImage="@{cart.getImgUrlC()}"
+            tools:src="@android:color/darker_gray" />
 
-            <TextView
-                android:id="@+id/tv_hargaProduk"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                app:layout_constraintStart_toEndOf="@+id/profile_image"
-                app:layout_constraintTop_toBottomOf="@+id/tv_namaProduk"
-                android:text="@{String.valueOf(cart.hargaB)}"
-                tools:text="Harga Produk" />
+        <TextView
+            android:id="@+id/tv_namaProduk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/raleway_medium"
+            android:text="@{cart.namaB}"
+            app:layout_constraintStart_toEndOf="@+id/profile_image"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Nama Produk" />
 
-            <TextView
-                android:id="@+id/tv_quantity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                app:layout_constraintStart_toEndOf="@+id/profile_image"
-                app:layout_constraintTop_toBottomOf="@+id/tv_hargaProduk"
-                android:text="@{String.valueOf(cart.jumlahB)}"
-                tools:text="Quantity" />
+        <TextView
+            android:id="@+id/tv_hargaProduk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="@{String.valueOf(cart.hargaB)}"
+            app:layout_constraintStart_toEndOf="@+id/profile_image"
+            app:layout_constraintTop_toBottomOf="@+id/tv_namaProduk"
+            tools:text="Harga Produk" />
 
-            <TextView
-                android:id="@+id/tv_quantity_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:text="Quantity"
-                app:layout_constraintStart_toEndOf="@+id/tv_quantity"
-                app:layout_constraintTop_toBottomOf="@+id/tv_hargaProduk" />
+        <TextView
+            android:id="@+id/tv_quantity_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="@string/quantity"
+            app:layout_constraintStart_toEndOf="@+id/profile_image"
+            app:layout_constraintTop_toBottomOf="@+id/tv_hargaProduk" />
 
-            <TextView
-                android:id="@+id/tv_total"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                app:layout_constraintStart_toEndOf="@+id/profile_image"
-                app:layout_constraintTop_toBottomOf="@+id/tv_quantity"
-                android:text="@{String.valueOf(cart.totalB)}"
-                tools:text="Total" />
+        <TextView
+            android:id="@+id/tv_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="@{String.valueOf(cart.jumlahB)}"
+            app:layout_constraintStart_toEndOf="@+id/tv_quantity_title"
+            app:layout_constraintTop_toBottomOf="@+id/tv_hargaProduk"
+            tools:text="[Num]" />
+
+        <TextView
+            android:id="@+id/tv_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="@{String.valueOf(cart.totalB)}"
+            app:layout_constraintStart_toEndOf="@+id/profile_image"
+            app:layout_constraintTop_toBottomOf="@+id/tv_quantity_title"
+            tools:text="Total" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

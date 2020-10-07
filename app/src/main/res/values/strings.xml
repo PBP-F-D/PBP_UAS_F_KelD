@@ -27,4 +27,6 @@
     <string name="shopping_cart_normal">Shopping Cart</string>
     <string name="categories">Categories</string>
     <string name="currency">Rp.</string>
+    <string name="removecart">Remove from cart</string>
+    <string name="quantity">Quantity:</string>
 </resources>

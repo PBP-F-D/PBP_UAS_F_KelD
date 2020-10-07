@@ -1,25 +1,21 @@
 package com.tubespbp.petshop.ui.shoppingCart.adapter;
 
 import android.content.Context;
-import android.os.Bundle;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.tubespbp.petshop.R;
 import com.tubespbp.petshop.databinding.ItemCartBinding;
-import com.tubespbp.petshop.databinding.KatalogBarangBinding;
-import com.tubespbp.petshop.ui.home.catalog.adapter.RecyclerViewAdapterKatalog;
-import com.tubespbp.petshop.ui.home.catalog.model.Barang;
+import com.tubespbp.petshop.ui.shoppingCart.database.DatabaseClient;
 import com.tubespbp.petshop.ui.shoppingCart.model.Cart;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RecyclerViewAdapterCart extends RecyclerView.Adapter< RecyclerViewAdapterCart.CartViewHolder>{
@@ -44,12 +40,24 @@ public class RecyclerViewAdapterCart extends RecyclerView.Adapter< RecyclerViewA
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final CartViewHolder holder, final int position) {
         cart = cartList.get(position);
         holder.itemCartBinding.setCart(cart);
-//        holder.tvNumber.setText(Integer.toString(user.getNumberU()));
-//        holder.tvName.setText(user.getNameU());
-//        holder.tvAge.setText(Integer.toString(user.getAgeU()) + " " + "years old");
+
+        holder.removeItemBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: Deleting an item from database crashes the app occasionally
+                //deletes item from database (still crashing)
+                deleteData(cartList.get(position), holder);
+
+                //item removal animation
+                notifyItemRemoved(position);
+
+                //deletes item from temporary cart list
+                cartList.remove(cart);
+            }
+        });
     }
 
     @Override
@@ -59,12 +67,38 @@ public class RecyclerViewAdapterCart extends RecyclerView.Adapter< RecyclerViewA
 
     public class CartViewHolder extends RecyclerView.ViewHolder {
         private ItemCartBinding itemCartBinding;
+        private MaterialButton removeItemBtn;
 
         public CartViewHolder(ItemCartBinding itemView){
             super(itemView.getRoot());
             itemCartBinding = itemView;
+            removeItemBtn = itemCartBinding.getRoot().findViewById(R.id.removeItem);
         }
 
+    }
+
+
+    private void deleteData(final Cart cart, final CartViewHolder holder){
+        class DeleteItem extends AsyncTask<Void, Void, Void> {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                DatabaseClient.getInstance(holder.itemView.getContext())
+                        .getDatabase()
+                        .userDAO()
+                        .delete(cart);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                Toast.makeText(holder.itemView.getContext(), "Item removed from cart", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        DeleteItem delete = new DeleteItem();
+        delete.execute();
     }
 
 

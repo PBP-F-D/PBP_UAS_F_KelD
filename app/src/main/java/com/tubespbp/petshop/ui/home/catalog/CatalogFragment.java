@@ -56,8 +56,7 @@ public class CatalogFragment extends Fragment {
         ListBarang = new DaftarBarang().BARANG;
 
         //List barang baru yang dikosongkan
-        newList = new DaftarBarang().BARANG;
-        newList.removeAll(newList);
+        ArrayList<Barang> newList = new ArrayList<Barang>();
 
         //Membandingkan nama/kategori supaya dimasukkan ke list baru
         switch(name) {
