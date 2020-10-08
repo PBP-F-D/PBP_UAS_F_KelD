@@ -25,9 +25,18 @@
         android:id="@+id/navigation_notifications"
         android:name="com.tubespbp.petshop.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_navigation_notifications_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/catalogFragment"
         android:name="com.tubespbp.petshop.ui.home.catalog.CatalogFragment"
         android:label="CatalogFragment" />
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.tubespbp.petshop.ui.profile.EditProfileFragment"
+        android:label="fragment_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" />
 </navigation>

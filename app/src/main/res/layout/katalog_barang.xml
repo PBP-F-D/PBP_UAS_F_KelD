@@ -30,7 +30,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:pImage="@{brg.getImgURL()}" />
+            app:pImage="@{brg.getImgURL()}"
+            tools:src="@color/lightgrey"/>
 
         <TextView
             android:id="@+id/hargaRp"
@@ -40,40 +41,43 @@
             android:layout_marginStart="8dp"
             android:text="@string/currency"
             android:textColor="@android:color/white"
+            android:fontFamily="@font/raleway_medium"
             app:layout_constraintStart_toEndOf="@+id/ivFotoBarang"
             app:layout_constraintTop_toBottomOf="@+id/namaBarang"
             tools:text="Rp." />
 
         <TextView
             android:id="@+id/hargaBarang"
-            style="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
             android:text="@{String.valueOf(brg.harga)}"
-
+            android:fontFamily="@font/raleway_medium"
             android:textColor="@android:color/white"
             app:layout_constraintStart_toEndOf="@+id/hargaRp"
             app:layout_constraintTop_toBottomOf="@+id/namaBarang" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_tambah"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="72dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/tambahCart"
             android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ivFotoBarang"
             app:layout_constraintTop_toBottomOf="@+id/hargaBarang" />
 
         <TextView
             android:id="@+id/namaBarang"
-            style="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="@font/raleway_bold"
             android:text="@{brg.nama}"
             android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"

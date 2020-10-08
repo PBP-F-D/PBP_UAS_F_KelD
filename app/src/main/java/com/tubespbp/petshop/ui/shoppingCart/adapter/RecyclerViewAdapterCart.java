@@ -8,11 +8,13 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.tubespbp.petshop.R;
 import com.tubespbp.petshop.databinding.ItemCartBinding;
+import com.tubespbp.petshop.ui.shoppingCart.ShoppingCartFragment;
 import com.tubespbp.petshop.ui.shoppingCart.database.DatabaseClient;
 import com.tubespbp.petshop.ui.shoppingCart.model.Cart;
 
@@ -49,13 +51,19 @@ public class RecyclerViewAdapterCart extends RecyclerView.Adapter< RecyclerViewA
             public void onClick(View view) {
                 //TODO: Deleting an item from database crashes the app occasionally
                 //deletes item from database (still crashing)
+                AppCompatActivity activity = (AppCompatActivity) view.getContext();
                 deleteData(cartList.get(position), holder);
 
                 //item removal animation
                 notifyItemRemoved(position);
 
                 //deletes item from temporary cart list
-                cartList.remove(cart);
+                //cartList.remove(cart);
+                ShoppingCartFragment shoppingCartFragment = new ShoppingCartFragment();
+                activity.getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.nav_host_fragment, shoppingCartFragment)
+                        .commit();
             }
         });
     }

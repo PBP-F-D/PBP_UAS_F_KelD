@@ -1,9 +1,11 @@
 package com.tubespbp.petshop.ui.profile;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -11,7 +13,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.Navigation;
 
+import com.google.android.material.button.MaterialButton;
 import com.tubespbp.petshop.R;
 
 public class ProfileFragment extends Fragment {
@@ -30,6 +34,14 @@ public class ProfileFragment extends Fragment {
 //                textView.setText(s);
 //            }
 //        });
+        Button btnEdit = root.findViewById(R.id.btn_editProfile);
+        btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(
+                        R.id.action_navigation_notifications_to_editProfileFragment);
+            }
+        });
         return root;
     }
 }
