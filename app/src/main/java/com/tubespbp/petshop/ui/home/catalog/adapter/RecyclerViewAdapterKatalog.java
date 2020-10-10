@@ -1,10 +1,14 @@
 package com.tubespbp.petshop.ui.home.catalog.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -42,18 +46,35 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
         holder.katalogBarangBinding.btnTambah.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(),brg.getNama()+" has been added to cart", Toast.LENGTH_SHORT).show();
 
-                //TODO: Update quantity if item already exists in cart instead of adding a new one
-//                boolean exists = false;
-//                for (int i=0; i<cartList.size(); i++) {
-//                    if(cartList.get(i).getNamaB().equals(brg.getNama())) {
-//                        exists = true;
-//                    }
-//                }
-//                if (exists == false) {
-                    addBarangToCart(holder);
-//                }
+                //Creates alert dialog every time the add button is clicked asking for user's input
+                android.app.AlertDialog.Builder alert = new android
+                        .app.AlertDialog.Builder(v.getContext())
+                        .setTitle("Masukkan Jumlah");
+
+                final EditText input = new EditText(v.getContext());
+                input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                input.setRawInputType(Configuration.KEYBOARD_12KEY);
+                alert.setView(input);
+
+                alert.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Integer value = Integer.parseInt(String.valueOf(input.getText()));
+                        //adds item to cart if input is greater than zero
+                        if(value > 0) {
+                            addBarangToCart(holder, value);
+                            Toast.makeText(holder.itemView.getContext(),value.toString() + "x " + brg.getNama()+" has been added to cart", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // Canceled.
+                    }
+                });
+
+                alert.show();
             }
         });
     }
@@ -77,13 +98,13 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
         }
     }
 
-    private void addBarangToCart(@NonNull final KatalogViewHolder holder){
+    private void addBarangToCart(@NonNull final KatalogViewHolder holder, final int value){
 
         class addBarangToCart extends AsyncTask<Void, Void, Void> {
             String name = holder.katalogBarangBinding.namaBarang.getText().toString();
             double harga =  Double.parseDouble(holder.katalogBarangBinding.hargaBarang.getText().toString());
             Cart cart;
-            int jml =  1;
+            int jml =  value;
             final String gmbr = holder.katalogBarangBinding.getBrg().getImgURL();
 
             double total = Double.parseDouble(holder.katalogBarangBinding.hargaBarang.getText().toString()) * jml;

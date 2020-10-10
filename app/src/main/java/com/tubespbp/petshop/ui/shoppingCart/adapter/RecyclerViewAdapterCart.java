@@ -49,7 +49,6 @@ public class RecyclerViewAdapterCart extends RecyclerView.Adapter< RecyclerViewA
         holder.removeItemBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Deleting an item from database crashes the app occasionally
                 //deletes item from database (still crashing)
                 AppCompatActivity activity = (AppCompatActivity) view.getContext();
                 deleteData(cartList.get(position), holder);
