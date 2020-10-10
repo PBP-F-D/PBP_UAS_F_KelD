@@ -27,6 +27,7 @@
     <string name="shopping_cart_normal">Shopping Cart</string>
     <string name="categories">Categories</string>
     <string name="currency">Rp.</string>
+    <string name="perpiece">/ pc</string>
     <string name="removecart">Remove from cart</string>
     <string name="quantity">Quantity:</string>
     <string name="edit_user_profile">Edit User Profile</string>

@@ -21,24 +21,6 @@
         android:background="@color/colorAccent"
         android:orientation="horizontal">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/removeItem"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/removecart"
-            android:textSize="12sp"
-            app:flow_horizontalAlign="end"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/profile_image"
-            app:layout_constraintTop_toBottomOf="@+id/tv_total"
-            app:layout_constraintVertical_bias="1.0"
-            tools:ignore="MissingConstraints" />
-
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
             android:layout_width="80dp"
@@ -61,21 +43,47 @@
             android:layout_marginEnd="8dp"
             android:fontFamily="@font/raleway_bold"
             android:text="@{cart.namaB}"
+            android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/profile_image"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Nama Produk" />
 
         <TextView
-            android:id="@+id/tv_hargaProduk"
+            android:id="@+id/tv_currency_harga"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:fontFamily="@font/raleway_medium"
-            android:text="@{String.valueOf(cart.hargaB)}"
+            android:text="@string/currency"
+            android:textColor="@android:color/white"
             app:layout_constraintStart_toEndOf="@+id/profile_image"
             app:layout_constraintTop_toBottomOf="@+id/tv_namaProduk"
+            tools:text="Rp. " />
+
+        <TextView
+            android:id="@+id/tv_hargaProduk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:fontFamily="@font/raleway_medium"
+            android:text="@{String.valueOf(cart.hargaB)}"
+            android:textColor="@android:color/white"
+            app:layout_constraintStart_toEndOf="@+id/tv_currency_harga"
+            app:layout_constraintTop_toBottomOf="@+id/tv_namaProduk"
             tools:text="Harga Produk" />
+
+        <TextView
+            android:id="@+id/tv_per_piece"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:fontFamily="@font/raleway_medium"
+            android:text="@string/perpiece"
+            android:textColor="@android:color/white"
+            app:layout_constraintStart_toEndOf="@+id/tv_hargaProduk"
+            app:layout_constraintTop_toBottomOf="@+id/tv_namaProduk"
+            tools:text="/ pc" />
 
         <TextView
             android:id="@+id/tv_quantity_title"
@@ -84,6 +92,7 @@
             android:layout_marginStart="12dp"
             android:fontFamily="@font/raleway_medium"
             android:text="@string/quantity"
+            android:textColor="@android:color/white"
             app:layout_constraintStart_toEndOf="@+id/profile_image"
             app:layout_constraintTop_toBottomOf="@+id/tv_hargaProduk" />
 
@@ -94,20 +103,53 @@
             android:layout_marginStart="4dp"
             android:fontFamily="@font/raleway_medium"
             android:text="@{String.valueOf(cart.jumlahB)}"
+            android:textColor="@android:color/white"
             app:layout_constraintStart_toEndOf="@+id/tv_quantity_title"
             app:layout_constraintTop_toBottomOf="@+id/tv_hargaProduk"
             tools:text="[Num]" />
 
         <TextView
-            android:id="@+id/tv_total"
+            android:id="@+id/tv_currency_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:fontFamily="@font/raleway_medium"
-            android:text="@{String.valueOf(cart.totalB)}"
+            android:text="@string/currency"
+            android:textColor="@android:color/white"
             app:layout_constraintStart_toEndOf="@+id/profile_image"
             app:layout_constraintTop_toBottomOf="@+id/tv_quantity_title"
+            tools:text="Rp." />
+
+        <TextView
+            android:id="@+id/tv_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:fontFamily="@font/raleway_medium"
+            android:text="@{String.valueOf(cart.totalB)}"
+            android:textColor="@android:color/white"
+            app:layout_constraintStart_toEndOf="@+id/tv_currency_total"
+            app:layout_constraintTop_toBottomOf="@+id/tv_quantity_title"
             tools:text="Total" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/removeItem"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/removecart"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            app:flow_horizontalAlign="end"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/profile_image"
+            app:layout_constraintTop_toBottomOf="@+id/tv_total"
+            app:layout_constraintVertical_bias="1.0"
+            tools:ignore="MissingConstraints" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
