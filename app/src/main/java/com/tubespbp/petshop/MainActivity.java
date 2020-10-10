@@ -2,8 +2,13 @@ package com.tubespbp.petshop;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -44,6 +49,25 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseMessaging.getInstance().subscribeToTopic("news");
 
+        final ImageButton dropdownMenu = findViewById(R.id.btn_dropdown);
+        dropdownMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popup = new PopupMenu(MainActivity.this, dropdownMenu);
+                popup.getMenuInflater()
+                        .inflate(R.menu.menu_dropdown, popup.getMenu());
+
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Intent intent = new Intent(getApplicationContext(), LocationActivity.class);
+                        startActivity(intent);
+                        return true;
+                    }
+                });
+
+                popup.show();
+            }
+        });
     }
 
 }
