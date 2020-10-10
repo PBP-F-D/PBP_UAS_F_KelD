@@ -18,6 +18,8 @@ import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.Marker;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -125,6 +127,14 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         symbolLayerIconFeatureList.add(Feature.fromGeometry(
                 Point.fromLngLat(-0.076132,51.508530)));
         enableLocationComponent(style);
+
+        final LatLng londonTower = new LatLng(51.508530, -0.076132);
+        Marker london = mapboxMap.addMarker(
+                new MarkerOptions()
+                .position(londonTower)
+                .title("PawHub Headquarters")
+        );
+        london.showInfoWindow(mapboxMap, mapView);
 
         CameraPosition position = new CameraPosition.Builder()
                 .target(new LatLng(51.508530, -0.076132)) // Sets the new camera position

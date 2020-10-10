@@ -63,7 +63,10 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
                         //adds item to cart if input is greater than zero
                         if(value > 0) {
                             addBarangToCart(holder, value);
-                            Toast.makeText(holder.itemView.getContext(),value.toString() + "x " + brg.getNama()+" has been added to cart", Toast.LENGTH_SHORT).show();
+                            if(value == 1)
+                                Toast.makeText(holder.itemView.getContext(),value.toString() + "x " + brg.getNama()+" has been added to cart", Toast.LENGTH_SHORT).show();
+                            else
+                                Toast.makeText(holder.itemView.getContext(),value.toString() + "x " + brg.getNama()+"(s) have been added to cart", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
