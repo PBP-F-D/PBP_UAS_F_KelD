@@ -1,5 +1,6 @@
 package com.tubespbp.petshop.ui.shoppingCart;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -40,6 +41,8 @@ public class ShoppingCartFragment extends Fragment {
     private MaterialButton checkOutBtn;
 
     private ShoppingCartViewModel shoppingCartViewModel;
+    private SharedPreferences shared;
+    int idUser;
 
     Constant constant;
     SharedPreferences.Editor editor;
@@ -56,9 +59,11 @@ public class ShoppingCartFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         shoppingCartBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_shopping_cart, container, false);
+        View view = shoppingCartBinding.getRoot();
 
         MainActivity main = (MainActivity)getActivity();
 
+        //Get theme
         app_preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         appColor = app_preferences.getInt("color", 0);
         appTheme = app_preferences.getInt("theme", 0);
@@ -73,8 +78,11 @@ public class ShoppingCartFragment extends Fragment {
             main.setTheme(appTheme);
         }
 
-        View view = shoppingCartBinding.getRoot();
+        //Get idUser from sharedpreferences
+        shared = getActivity().getSharedPreferences("getId", Context.MODE_PRIVATE);
+        idUser = shared.getInt("idUser", -1);
 
+        //Recycler View
         recyclerView = shoppingCartBinding.rvFollow;
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -82,6 +90,7 @@ public class ShoppingCartFragment extends Fragment {
 
         getCart();
 
+        //Check out Button Pressed
         checkOutBtn = view.findViewById(R.id.btn_checkout);
         checkOutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,7 +137,7 @@ public class ShoppingCartFragment extends Fragment {
                         .getInstance(getContext())
                         .getDatabase()
                         .userDAO()
-                        .getAll();
+                        .getUserCart(idUser);
                 return userCart;
             }
         }

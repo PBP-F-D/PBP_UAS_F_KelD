@@ -36,9 +36,6 @@ public class User implements Serializable {
     @ColumnInfo(name = "country")
     public String country;
 
-    @ColumnInfo(name = "cart")
-    public List<Cart> cartUser;
-
     public int getId() {
         return id;
     }
@@ -93,13 +90,6 @@ public class User implements Serializable {
 
     public void setCountry(String country) {
         this.country = country;
-    }
-
-    public List<Cart> getCartUser() {
-        return cartUser;
-    }
-    public void setCartUser(List<Cart> cartUser) {
-        this.cartUser = cartUser;
     }
 
     @BindingAdapter("userProfile")

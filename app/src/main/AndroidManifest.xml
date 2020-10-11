@@ -14,11 +14,10 @@
         <activity
             android:name=".ThemeActivity"
             android:label="">
-
         </activity>
-        <activity
-            android:name=".LocationActivity"
-            />
+        <activity android:name=".LocationActivity" />
+        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".SignUpActivity"></activity>
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

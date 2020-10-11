@@ -26,6 +26,8 @@ import java.util.List;
 public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerViewAdapterKatalog.KatalogViewHolder> {
     Context context;
     private List<Barang> result;
+    SharedPreferences shared;
+    int idUser;
 
     Constant constant;
     SharedPreferences.Editor editor;
@@ -42,6 +44,11 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
     @Override
     public KatalogViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
+        context = viewGroup.getContext();
+
+        //Get idUser from sharedpreferences
+        shared = context.getSharedPreferences("getId", Context.MODE_PRIVATE);
+        idUser = shared.getInt("idUser", -1);
 
 //        app_preferences = PreferenceManager.getDefaultSharedPreferences(viewGroup.getContext());
 //        appColor = app_preferences.getInt("color", 0);
@@ -144,11 +151,11 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
             protected Void doInBackground(Void... voids) {
                 cart = new Cart();
                 cart.setNamaB(name);
+                cart.setIdUser(idUser);
                 cart.setHargaB(harga);
                 cart.setJumlahB(jml);
                 cart.setTotalB(total);
                 cart.setImgUrlC(gmbr);
-                cart.setPembeliB("rastra");
 
                 DatabaseClient.getInstance(holder.itemView.getContext())
                         .getDatabase()

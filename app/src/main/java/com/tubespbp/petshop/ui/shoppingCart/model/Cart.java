@@ -19,6 +19,9 @@ public class Cart implements Serializable {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
+    @ColumnInfo(name = "idUser")
+    public int idUser;
+
     @ColumnInfo(name = "namaBarang")
     public String namaB;
 
@@ -34,9 +37,6 @@ public class Cart implements Serializable {
     @ColumnInfo(name = "imgUrlCart")
     public String imgUrlC;
 
-    @ColumnInfo(name = "pembeli")
-    public String pembeliB;
-
     public int getId() {
         return id;
     }
@@ -44,6 +44,12 @@ public class Cart implements Serializable {
     public void setId(int id) {
         this.id = id;
     }
+
+    public int getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(int idUser) { this.idUser = idUser; }
 
     public String getNamaB() {
         return namaB;
@@ -83,14 +89,6 @@ public class Cart implements Serializable {
 
     public void setImgUrlC(String imgUrlC) {
         this.imgUrlC = imgUrlC;
-    }
-
-    public String getPembeliB() {
-        return pembeliB;
-    }
-
-    public void setPembeliB(String pembeliB) {
-        this.pembeliB = pembeliB;
     }
 
     @BindingAdapter("cImage")
