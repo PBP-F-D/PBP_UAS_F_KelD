@@ -43,4 +43,5 @@
     <string name="sign_up">Sign Up</string>
     <string name="cancel">Cancel</string>
     <string name="check_out">Check Out</string>
+    <string name="mapbox_access_token">sk.eyJ1Ijoibmlja3lqb3ZhbnVzIiwiYSI6ImNrZnFqdmEzNzE1NGgyeW9lNDZ3eWNkZWYifQ._-syHk1Ju_qDlurpFgEsgQ</string>
 </resources>
