@@ -1,5 +1,6 @@
 package com.tubespbp.petshop.ui.home.catalog;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,10 +10,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.tubespbp.petshop.Constant;
+import com.tubespbp.petshop.MainActivity;
 import com.tubespbp.petshop.R;
 import com.tubespbp.petshop.databinding.FragmentCatalogBinding;
 import com.tubespbp.petshop.ui.home.HomeFragment;
@@ -34,6 +38,13 @@ public class CatalogFragment extends Fragment {
 
     public String name;
 
+    Constant constant;
+    SharedPreferences.Editor editor;
+    SharedPreferences app_preferences;
+    int appTheme;
+    int themeColor;
+    int appColor;
+
     public CatalogFragment() {
         // Required empty public constructor
     }
@@ -42,6 +53,23 @@ public class CatalogFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         catalogBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_catalog, container, false);
+
+        MainActivity main = (MainActivity)getActivity();
+
+        app_preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        appColor = app_preferences.getInt("color", 0);
+        appTheme = app_preferences.getInt("theme", 0);
+        themeColor = appColor;
+        constant.color = appColor;
+
+        if (themeColor == 0){
+            main.setTheme(Constant.theme);
+        }else if (appTheme == 0){
+            main.setTheme(Constant.theme);
+        }else{
+            main.setTheme(appTheme);
+        }
+
         View view = catalogBinding.getRoot();
 
         //Mengambil Bundle dari HomeFragment

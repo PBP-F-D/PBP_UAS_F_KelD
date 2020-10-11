@@ -2,6 +2,7 @@ package com.tubespbp.petshop.ui.home.catalog.adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.text.InputType;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.tubespbp.petshop.Constant;
 import com.tubespbp.petshop.databinding.KatalogBarangBinding;
 import com.tubespbp.petshop.ui.home.catalog.model.Barang;
 import com.tubespbp.petshop.ui.shoppingCart.database.DatabaseClient;
@@ -25,6 +27,13 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
     Context context;
     private List<Barang> result;
 
+    Constant constant;
+    SharedPreferences.Editor editor;
+    SharedPreferences app_preferences;
+    int appTheme;
+    int themeColor;
+    int appColor;
+
     public RecyclerViewAdapterKatalog(List<Barang> result) {
         this.result = result;
     }
@@ -33,6 +42,20 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
     @Override
     public KatalogViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
+
+//        app_preferences = PreferenceManager.getDefaultSharedPreferences(viewGroup.getContext());
+//        appColor = app_preferences.getInt("color", 0);
+//        appTheme = app_preferences.getInt("theme", 0);
+//        themeColor = appColor;
+//        constant.color = appColor;
+//
+//        if (themeColor == 0){
+//             setTheme(Constant.theme);
+//        }else if (appTheme == 0){
+//            setTheme(Constant.theme);
+//        }else{
+//            setTheme(appTheme);
+//        }
 
         KatalogBarangBinding binding = KatalogBarangBinding.inflate(layoutInflater, viewGroup, false);
         return new KatalogViewHolder(binding);

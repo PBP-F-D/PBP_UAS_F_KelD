@@ -3,8 +3,10 @@ package com.tubespbp.petshop;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -21,8 +23,30 @@ import androidx.navigation.ui.NavigationUI;
 
 public class MainActivity extends AppCompatActivity {
 
+    Constant constant;
+    SharedPreferences.Editor editor;
+    SharedPreferences app_preferences;
+    int appTheme;
+    int themeColor;
+    int appColor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        app_preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        appColor = app_preferences.getInt("color", 0);
+        appTheme = app_preferences.getInt("theme", 0);
+        themeColor = appColor;
+        constant.color = appColor;
+
+        if (themeColor == 0){
+            setTheme(Constant.theme);
+        }else if (appTheme == 0){
+            setTheme(Constant.theme);
+        }else{
+            setTheme(appTheme);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -59,9 +83,16 @@ public class MainActivity extends AppCompatActivity {
 
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-                        Intent intent = new Intent(getApplicationContext(), LocationActivity.class);
-                        startActivity(intent);
-                        return true;
+                        Intent intent;
+                        if(item.getItemId()==R.id.menu_location){
+                            intent = new Intent(getApplicationContext(), LocationActivity.class);
+                            startActivity(intent);
+                            return true;
+                        }else{
+                            intent = new Intent(getApplicationContext(), ThemeActivity.class);
+                            startActivity(intent);
+                            return true;
+                        }
                     }
                 });
 

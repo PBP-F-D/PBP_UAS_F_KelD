@@ -16,6 +16,7 @@
     <string name="catalog"> | Catalog</string>
     <string name="profile"> | Profile</string>
     <string name="location">| Headquarters</string>
+    <string name="theme">| Theme</string>
     <string name="user_profile">User Profile</string>
     <string name="nama">Name</string>
     <string name="username">Username</string>
@@ -43,6 +44,7 @@
     <string name="enter_your_name">Enter your name</string>
     <string name="submit">Submit</string>
     <string name="ourlocation">Our Location</string>
+    <string name="settingtheme">Theme Setting</string>
     <string name="_login">| Login</string>
     <string name="login">Login</string>
     <string name="password">Password</string>

@@ -1,5 +1,6 @@
 package com.tubespbp.petshop.ui.shoppingCart;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.databinding.DataBindingUtil;
@@ -7,11 +8,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.tubespbp.petshop.Constant;
+import com.tubespbp.petshop.MainActivity;
 import com.tubespbp.petshop.R;
 import com.tubespbp.petshop.databinding.FragmentCheckoutBinding;
 import com.tubespbp.petshop.ui.home.catalog.adapter.RecyclerViewAdapterKatalog;
@@ -31,6 +35,13 @@ public class CheckoutFragment extends Fragment {
     private TextView totalprice;
     private double total = 0;
 
+    Constant constant;
+    SharedPreferences.Editor editor;
+    SharedPreferences app_preferences;
+    int appTheme;
+    int themeColor;
+    int appColor;
+
     public CheckoutFragment() {
         //Empty public constructor
     }
@@ -38,6 +49,22 @@ public class CheckoutFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        MainActivity main = (MainActivity)getActivity();
+
+        app_preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        appColor = app_preferences.getInt("color", 0);
+        appTheme = app_preferences.getInt("theme", 0);
+        themeColor = appColor;
+        constant.color = appColor;
+
+        if (themeColor == 0){
+            main.setTheme(Constant.theme);
+        }else if (appTheme == 0){
+            main.setTheme(Constant.theme);
+        }else{
+            main.setTheme(appTheme);
+        }
 
     }
 

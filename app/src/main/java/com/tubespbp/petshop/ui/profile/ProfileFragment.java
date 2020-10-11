@@ -1,7 +1,9 @@
 package com.tubespbp.petshop.ui.profile;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,14 +18,40 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
 import com.google.android.material.button.MaterialButton;
+import com.tubespbp.petshop.Constant;
+import com.tubespbp.petshop.MainActivity;
 import com.tubespbp.petshop.R;
 
 public class ProfileFragment extends Fragment {
 
     private ProfileViewModel profileViewModel;
 
+    Constant constant;
+    SharedPreferences.Editor editor;
+    SharedPreferences app_preferences;
+    int appTheme;
+    int themeColor;
+    int appColor;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
+        MainActivity main = (MainActivity)getActivity();
+
+        app_preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        appColor = app_preferences.getInt("color", 0);
+        appTheme = app_preferences.getInt("theme", 0);
+        themeColor = appColor;
+        constant.color = appColor;
+
+        if (themeColor == 0){
+            main.setTheme(Constant.theme);
+        }else if (appTheme == 0){
+            main.setTheme(Constant.theme);
+        }else{
+            main.setTheme(appTheme);
+        }
+
         profileViewModel =
                 ViewModelProviders.of(this).get(ProfileViewModel.class);
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
