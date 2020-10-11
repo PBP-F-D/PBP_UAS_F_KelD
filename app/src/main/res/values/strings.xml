@@ -16,6 +16,7 @@
     <string name="catalog"> | Catalog</string>
     <string name="profile"> | Profile</string>
     <string name="location">| Headquarters</string>
+
     <string name="user_profile">User Profile</string>
     <string name="nama">Name</string>
     <string name="username">Username</string>
@@ -24,12 +25,15 @@
     <string name="city">City</string>
     <string name="country">Country</string>
     <string name="edit_profile">Edit Profile</string>
+
     <string name="shopping_cart_normal">Shopping Cart</string>
     <string name="categories">Categories</string>
     <string name="currency">Rp.</string>
     <string name="perpiece">/ pc</string>
     <string name="removecart">Remove from cart</string>
     <string name="quantity">Quantity:</string>
+    <string name="checkout">Check-out</string>
+
     <string name="edit_user_profile">Edit User Profile</string>
     <string name="enter_your_name">Enter your name</string>
     <string name="submit">Submit</string>
