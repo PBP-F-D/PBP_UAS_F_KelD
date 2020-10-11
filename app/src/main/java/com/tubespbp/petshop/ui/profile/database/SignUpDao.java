@@ -13,7 +13,7 @@ import java.util.List;
 public interface SignUpDao {
 
     @Query("SELECT * FROM user")
-    List<User> getAll();
+    List<Cart> getAll();
 
     @Insert
     void insert(User user);

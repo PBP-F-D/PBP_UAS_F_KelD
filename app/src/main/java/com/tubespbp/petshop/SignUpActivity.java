@@ -21,33 +21,33 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
     }
 
-//    private void addUser(User user){
-//        final String emailSign = .getText().toString();
-//
-//
-//        class AddUser extends AsyncTask<Void, Void, Void> {
-//
-//            @Override
-//            protected Void doInBackground(Void... voids) {
-//                User user = new User();
-//                user.setFullName(name);
-//
-//                DatabaseClientUser.getInstance(getActivity().getApplicationContext()).getDatabaseUser()
-//                        .signUpDAO()
-//                        .insert(user);
-//                return null;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(Void aVoid) {
-//                super.onPostExecute(aVoid);
-//                Toast.makeText(getApplicationContext(), "User saved", Toast.LENGTH_SHORT).show();
-//                editText.setText("");
-//                getUsers();
-//            }
-//        }
-//
-//        AddUser add = new AddUser();
-//        add.execute();
-//    }
+    private void addUser(User user){
+        final String emailSign = .getText().toString();
+
+
+        class AddUser extends AsyncTask<Void, Void, Void> {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                User user = new User();
+                user.setFullName(name);
+
+                DatabaseClientUser.getInstance(getActivity().getApplicationContext()).getDatabaseUser()
+                        .signUpDAO()
+                        .insert(user);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                Toast.makeText(getApplicationContext(), "User saved", Toast.LENGTH_SHORT).show();
+                editText.setText("");
+                getUsers();
+            }
+        }
+
+        AddUser add = new AddUser();
+        add.execute();
+    }
 }
