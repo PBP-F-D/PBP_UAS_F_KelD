@@ -64,9 +64,9 @@ public class ThemeActivity extends AppCompatActivity {
     }
 
     private void optionsDialog(){
-        final String[] warna = {"Default", "Merah", "Biru"};
+        final String[] warna = {"Default", "Red-Gold", "Blue-Purple"};
         AlertDialog.Builder builder = new AlertDialog.Builder(ThemeActivity.this);
-        builder.setTitle("Pilih Warna");
+        builder.setTitle("Pick One");
         builder.setSingleChoiceItems(warna, 0, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -78,9 +78,9 @@ public class ThemeActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 int value = 0;
 
-                if (selectedWarna.equals("Merah"))
+                if (selectedWarna.equals("Red-Gold"))
                     value = 1;
-                else if (selectedWarna.equals("Biru"))
+                else if (selectedWarna.equals("Blue-Purple"))
                     value = 2;
                 else if (selectedWarna.equals("Default"))
                     value = 3;

@@ -57,4 +57,5 @@
     <string name="mapbox_access_token">sk.eyJ1Ijoibmlja3lqb3ZhbnVzIiwiYSI6ImNrZnFqdmEzNzE1NGgyeW9lNDZ3eWNkZWYifQ._-syHk1Ju_qDlurpFgEsgQ</string>
 
     <string name="logout">Logout</string>
+    <string name="theme_picker">Theme Picker</string>
 </resources>
