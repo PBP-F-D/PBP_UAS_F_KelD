@@ -34,6 +34,7 @@
     <string name="enter_your_name">Enter your name</string>
     <string name="submit">Submit</string>
     <string name="ourlocation">Our Location</string>
+<<<<<<< HEAD
     <string name="_login">| Login</string>
     <string name="login">Login</string>
     <string name="password">Password</string>
@@ -43,4 +44,6 @@
     <string name="sign_up">Sign Up</string>
     <string name="cancel">Cancel</string>
     <string name="check_out">Check Out</string>
+=======
+>>>>>>> parent of 4717ce9... Merge branch 'master' of D:\Tugas\Semester 5\PBP\tubes\Petshop_delete_cart with conflicts.
 </resources>
