@@ -69,15 +69,19 @@ public class ShoppingCartFragment extends Fragment {
                 bundle.putSerializable("arraylist", items);
 
                 //Navigate to CheckoutFragment
-                Navigation.findNavController(view).navigate(
-                        R.id.action_navigation_cart_to_checkoutFragment, bundle);
+                if(adapter.getItemCount()>0)
+                    Navigation.findNavController(view).navigate(
+                            R.id.action_navigation_cart_to_checkoutFragment, bundle);
+                else
+                    Toast.makeText(getContext(), "Cart is Empty",
+                            Toast.LENGTH_SHORT).show();
             }
         });
 
         return view;
     }
 
-    private void getCart(){
+    public void getCart(){
         class GetCart extends AsyncTask<Void, Void, List<Cart>> {
 
             @Override
