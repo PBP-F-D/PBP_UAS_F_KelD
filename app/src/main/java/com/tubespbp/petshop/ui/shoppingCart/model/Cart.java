@@ -19,9 +19,6 @@ public class Cart implements Serializable {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
-    @ColumnInfo(name = "idUser")
-    public int idUser;
-
     @ColumnInfo(name = "namaBarang")
     public String namaB;
 
@@ -46,14 +43,6 @@ public class Cart implements Serializable {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(int idUser) {
-        this.idUser = idUser;
     }
 
     public String getNamaB() {

@@ -1,10 +1,7 @@
 package com.tubespbp.petshop.ui.profile;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,20 +24,16 @@ public class ProfileFragment extends Fragment {
 
     private ProfileViewModel profileViewModel;
     private MaterialTextView email, name, username, phone, city, country;
-    private List<User> userList;
-
-    SharedPreferences shared = getActivity().getSharedPreferences("getId", Context.MODE_PRIVATE);
-    int idUser = shared.getInt("idUser", -1);
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
+        email = container.findViewById(R.id.et_email);
+        email = container.findViewById(R.id.et_email);
+
         profileViewModel =
                 ViewModelProviders.of(this).get(ProfileViewModel.class);
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
-        Log.d("ID USER Profile", String.valueOf(idUser));
-
-        getUsers();
 
         Button btnEdit = root.findViewById(R.id.btn_editProfile);
         btnEdit.setOnClickListener(new View.OnClickListener() {
@@ -58,11 +51,11 @@ public class ProfileFragment extends Fragment {
 
             @Override
             protected List<User> doInBackground(Void... voids) {
-                userList = DatabaseClientUser
-                        .getInstance(getActivity().getApplicationContext())
+                List<User> userList = DatabaseClientUser
+                        .getInstance(getContext())
                         .getDatabaseUser()
                         .signUpDAO()
-                        .getUser(idUser);
+                        .getAll();
                 return userList;
             }
 
@@ -70,7 +63,7 @@ public class ProfileFragment extends Fragment {
             protected void onPostExecute(List<User> users) {
                 super.onPostExecute(users);
                 if (users.isEmpty()){
-                    Toast.makeText(getActivity(), "No logged-in user", Toast.LENGTH_SHORT).show();
+
                 }
             }
         }

@@ -2,6 +2,7 @@ package com.tubespbp.petshop.ui.shoppingCart;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,6 +33,7 @@ public class ShoppingCartFragment extends Fragment {
     private RecyclerViewAdapterCart adapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private FragmentShoppingCartBinding shoppingCartBinding;
+    private MaterialButton checkOutBtn;
 
     private ShoppingCartViewModel shoppingCartViewModel;
 
@@ -51,10 +54,29 @@ public class ShoppingCartFragment extends Fragment {
 
         getCart();
 
+        checkOutBtn = view.findViewById(R.id.btn_checkout);
+        checkOutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Get cart list when clicked
+                ArrayList<Cart> items = new ArrayList<Cart>();
+                for(int i=0; i<adapter.getItemCount(); i++){
+                    items.add(adapter.getItem(i));
+                }
+
+                //Create a new ArrayList bundle
+                Bundle bundle= new Bundle();
+                bundle.putSerializable("arraylist", items);
+
+                //Navigate to CheckoutFragment
+                Navigation.findNavController(view).navigate(
+                        R.id.action_navigation_cart_to_checkoutFragment, bundle);
+            }
+        });
+
         return view;
     }
 
-    //TODO: 5th item on the list disappears when inserted, adding more will show the item but hides the last item on the list. (e.g. 6 hides 7, 7 hides 8)
     private void getCart(){
         class GetCart extends AsyncTask<Void, Void, List<Cart>> {
 

@@ -2,7 +2,6 @@ package com.tubespbp.petshop.ui.home.catalog.adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.text.InputType;
@@ -25,8 +24,6 @@ import java.util.List;
 public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerViewAdapterKatalog.KatalogViewHolder> {
     Context context;
     private List<Barang> result;
-    SharedPreferences shared = context.getSharedPreferences("getId", Context.MODE_PRIVATE);
-    int idUser = shared.getInt("idUser", -1);
 
     public RecyclerViewAdapterKatalog(List<Barang> result) {
         this.result = result;
@@ -107,9 +104,9 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
     private void addBarangToCart(@NonNull final KatalogViewHolder holder, final int value){
 
         class addBarangToCart extends AsyncTask<Void, Void, Void> {
-            Cart cart;
             String name = holder.katalogBarangBinding.namaBarang.getText().toString();
             double harga =  Double.parseDouble(holder.katalogBarangBinding.hargaBarang.getText().toString());
+            Cart cart;
             int jml =  value;
             final String gmbr = holder.katalogBarangBinding.getBrg().getImgURL();
 
@@ -124,7 +121,6 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
             protected Void doInBackground(Void... voids) {
                 cart = new Cart();
                 cart.setNamaB(name);
-                cart.setIdUser(idUser);
                 cart.setHargaB(harga);
                 cart.setJumlahB(jml);
                 cart.setTotalB(total);
