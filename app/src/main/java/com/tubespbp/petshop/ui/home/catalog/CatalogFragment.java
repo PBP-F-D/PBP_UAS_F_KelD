@@ -41,9 +41,7 @@ public class CatalogFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-       // View view = inflater.inflate(R.layout.fragment_catalog, container, false);
         catalogBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_catalog, container, false);
-   //     binding = DataBindingUtil.setContentView(getActivity(), R.layout.fragment_catalog);
         View view = catalogBinding.getRoot();
 
         //Mengambil Bundle dari HomeFragment
