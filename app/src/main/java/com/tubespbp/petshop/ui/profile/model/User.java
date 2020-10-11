@@ -6,8 +6,10 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.bumptech.glide.Glide;
+import com.tubespbp.petshop.ui.shoppingCart.model.Cart;
 
 import java.io.Serializable;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -33,6 +35,9 @@ public class User implements Serializable {
 
     @ColumnInfo(name = "country")
     public String country;
+
+    @ColumnInfo(name = "cart")
+    public List<Cart> cartUser;
 
     public int getId() {
         return id;
@@ -88,6 +93,13 @@ public class User implements Serializable {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public List<Cart> getCartUser() {
+        return cartUser;
+    }
+    public void setCartUser(List<Cart> cartUser) {
+        this.cartUser = cartUser;
     }
 
     @BindingAdapter("userProfile")

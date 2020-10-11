@@ -1,11 +1,19 @@
 package com.tubespbp.petshop.ui.profile;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import com.tubespbp.petshop.R;
+import com.tubespbp.petshop.ui.profile.database.DatabaseClientUser;
+import com.tubespbp.petshop.ui.profile.model.User;
+import com.tubespbp.petshop.ui.shoppingCart.database.DatabaseClient;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,4 +69,30 @@ public class EditProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_edit_profile, container, false);
     }
+
+    private void update(final User user){
+        class UpdateUser extends AsyncTask<Void, Void, Void> {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                DatabaseClientUser.getInstance(getActivity().getApplicationContext()).getDatabaseUser()
+                        .signUpDAO()
+                        .update(user);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                Toast.makeText(getActivity().getApplicationContext(), "User updated", Toast.LENGTH_SHORT).show();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.hide(EditProfileFragment.this).commit();
+            }
+        }
+
+        UpdateUser update = new UpdateUser();
+        update.execute();
+    }
+
 }
