@@ -34,4 +34,13 @@
     <string name="enter_your_name">Enter your name</string>
     <string name="submit">Submit</string>
     <string name="ourlocation">Our Location</string>
+    <string name="_login">| Login</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="questionSignUp">Don\'t have an account?</string>
+    <string name="clickHereSignUp">Click here to sign up!</string>
+    <string name="_sign_up">| Sign Up</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="cancel">Cancel</string>
+    <string name="check_out">Check Out</string>
 </resources>
