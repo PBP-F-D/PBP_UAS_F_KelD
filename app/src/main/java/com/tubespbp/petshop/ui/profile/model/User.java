@@ -1,5 +1,7 @@
 package com.tubespbp.petshop.ui.profile.model;
 
+import android.graphics.Bitmap;
+
 import androidx.databinding.BindingAdapter;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -35,6 +37,12 @@ public class User implements Serializable {
 
     @ColumnInfo(name = "country")
     public String country;
+
+    @ColumnInfo(name = "image")
+    public String image;
+
+//    @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
+//    private byte[] image;
 
     public int getId() {
         return id;
@@ -91,6 +99,14 @@ public class User implements Serializable {
     public void setCountry(String country) {
         this.country = country;
     }
+
+//    public byte[] getImage() { return image; }
+//
+//    public void setImage(byte[] image) { this.image = image; }
+
+    public String getImage() { return image; }
+
+    public void setImage(String image) { this.image = image; }
 
     @BindingAdapter("userProfile")
     public static void loadImage(CircleImageView circleImageView, String imgUrlC) {

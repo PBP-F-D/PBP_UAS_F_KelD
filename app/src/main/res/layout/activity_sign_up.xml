@@ -56,14 +56,14 @@
                 android:textSize="20sp" />
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profile_image"
+                android:id="@+id/profile_image_signUp"
                 android:layout_width="130dp"
                 android:layout_height="130dp"
                 android:layout_marginTop="20dp"
                 app:civ_border_color="#009688"
                 app:civ_border_width="2dp"
                 android:layout_gravity="center"
-                tools:src="@android:color/darker_gray" />
+                android:src="@android:color/darker_gray" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_signUp_name"

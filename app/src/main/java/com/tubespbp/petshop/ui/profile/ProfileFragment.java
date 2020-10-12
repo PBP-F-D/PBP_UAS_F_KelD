@@ -2,6 +2,10 @@ package com.tubespbp.petshop.ui.profile;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -10,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.textview.MaterialTextView;
 import com.tubespbp.petshop.Constant;
 import com.tubespbp.petshop.MainActivity;
@@ -26,13 +32,18 @@ import com.tubespbp.petshop.databinding.FragmentProfileBinding;
 import com.tubespbp.petshop.ui.profile.database.DatabaseClientUser;
 import com.tubespbp.petshop.ui.profile.model.User;
 
+import java.nio.ByteBuffer;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends Fragment {
 
     private ProfileViewModel profileViewModel;
     private MaterialTextView email, name, username, phone, city, country;
+    private CircleImageView image;
     private List<User> userList;
+    Bitmap[] array;
 
     SharedPreferences shared;
     int idUser;
@@ -75,6 +86,8 @@ public class ProfileFragment extends Fragment {
         idUser = shared.getInt("idUser", -1);
         Log.d("ID USER Profile", String.valueOf(idUser));
 
+        image = root.findViewById(R.id.profile_image_profile);
+
         getUsers();
 
         Button btnEdit = root.findViewById(R.id.btn_editProfile);
@@ -107,7 +120,13 @@ public class ProfileFragment extends Fragment {
                 if (users.isEmpty()){
                     Toast.makeText(getActivity(), "No logged-in user", Toast.LENGTH_SHORT).show();
                 } else {
+
+                    Glide.with(getContext())
+                            .load(Uri.parse(userList.get(0).getImage()))
+                            .into(image);
+
                     profileBinding.setUser(userList.get(0));
+
                 }
             }
         }

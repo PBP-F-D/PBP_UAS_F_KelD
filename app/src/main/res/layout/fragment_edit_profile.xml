@@ -21,18 +21,18 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
             android:minHeight="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:titleTextColor="?attr/colorAccent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:titleTextColor="@color/colorAccent">
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/app_name"
-                android:textColor="@color/colorAccent"
+                android:textColor="?attr/colorAccent"
                 android:textSize="23sp"
                 android:theme="@style/MainToolbarTheme" />
 
@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/profile"
-                android:textColor="@color/colorAccent"
+                android:textColor="?attr/colorAccent"
                 android:textSize="23sp"
                 android:theme="@style/OtherToolbarTheme" />
         </androidx.appcompat.widget.Toolbar>
@@ -62,18 +62,19 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/raleway_bold"
                     android:text="@string/edit_user_profile"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="?attr/colorAccent"
                     android:textAlignment="center"
                     android:textSize="28sp" />
+
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/profile_image"
+                    android:id="@+id/profile_image_edit"
                     android:layout_width="130dp"
-                    android:layout_height="130dp"
+                    android:layout_height="117dp"
+                    android:layout_gravity="center"
                     android:layout_marginTop="20dp"
                     app:civ_border_color="#009688"
                     app:civ_border_width="2dp"
-                    android:layout_gravity="center"
-                    tools:src="@android:color/darker_gray" />
+                    android:src="@android:color/darker_gray" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_name"

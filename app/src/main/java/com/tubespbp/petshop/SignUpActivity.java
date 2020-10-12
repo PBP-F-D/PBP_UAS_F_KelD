@@ -1,26 +1,47 @@
 package com.tubespbp.petshop;
 
+import android.Manifest;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.media.Image;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.tubespbp.petshop.ui.profile.database.DatabaseClientUser;
 import com.tubespbp.petshop.ui.profile.model.User;
 
+import java.nio.ByteBuffer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SignUpActivity extends AppCompatActivity {
     TextInputLayout emailLayout, nameLayout, passLayout, phoneLayout, cityLayout, countryLayout;
     TextInputEditText email, name, pass, phone, city, country;
+    CircleImageView profilePict;
     MaterialButton signUpBtn, cancelBtn;
+
+    //Camera
+    private static final int PERMISSION_CODE = 1000;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    Uri imgUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +49,7 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
 
         //ID
+        profilePict = findViewById(R.id.profile_image_signUp);
         email = findViewById(R.id.ti_signUp_email);
         name = findViewById(R.id.ti_signUp_name);
         pass = findViewById(R.id.ti_signUp_pass);
@@ -60,7 +82,68 @@ public class SignUpActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        profilePict.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //if system os is >= marshmallow, request runtime permission
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED ||
+                        checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                        //request enabling permission
+                        String[] permission = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        //show popup to request permission
+                        requestPermissions(permission, PERMISSION_CODE);
+                    } else {
+                        //permission granted
+                        capturePhoto();
+                    }
+                } else {
+                    //system os < marshmallow
+                    capturePhoto();
+                }
+            }
+        });
     }
+    //handling permission result
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSION_CODE: {
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    capturePhoto(); // permission from popup was granted
+                } else {
+                    Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Glide.with(this)
+                    .load(imgUri)
+                    .into(profilePict);
+        }
+    }
+
+    //Camera
+    public void capturePhoto() {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE,"New Picture");
+        values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
+        imgUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        // Create the camera_intent ACTION_IMAGE_CAPTURE. it will open the camera for capture the image
+        Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        camera_intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
+        // Start the activity with camera_intent, and request pic id
+        startActivityForResult(camera_intent, REQUEST_IMAGE_CAPTURE);
+    }
+
+    //Checking email validity
     public static boolean isEmailValid(String email) {
         boolean isValid = false;
 
@@ -85,6 +168,9 @@ public class SignUpActivity extends AppCompatActivity {
         final String countrySign = country.getText().toString();
 
         //Input Sign Up Exception
+        if (imgUri == null) {
+            Toast.makeText(this, "Upload your image", Toast.LENGTH_SHORT).show();
+        }
         if(emailSign.isEmpty()) emailLayout.setError("Please enter your email");
         else if (!isEmailValid(emailSign)) emailLayout.setError("Please enter a valid email");
         else emailLayout.setError(null);
@@ -104,7 +190,7 @@ public class SignUpActivity extends AppCompatActivity {
         if(countrySign.isEmpty()) countryLayout.setError("Please enter your country");
         else countryLayout.setError(null);
 
-        if(isEmailValid(emailSign) && !emailSign.isEmpty() && !nameSign.isEmpty() && !passSign.isEmpty()
+        if(imgUri != null && isEmailValid(emailSign) && !emailSign.isEmpty() && !nameSign.isEmpty() && !passSign.isEmpty()
                 && !phoneSign.isEmpty() && !citySign.isEmpty() && !countrySign.isEmpty()) {
             class AddUser extends AsyncTask<Void, Void, Void> {
 
@@ -112,6 +198,7 @@ public class SignUpActivity extends AppCompatActivity {
                 protected Void doInBackground(Void... voids) {
                     User user = new User();
                     user.setEmail(emailSign);
+                    user.setImage(imgUri.toString());
                     user.setFullName(nameSign);
                     user.setCity(citySign);
                     user.setCountry(countrySign);
