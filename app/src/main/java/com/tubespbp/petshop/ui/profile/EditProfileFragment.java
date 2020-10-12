@@ -163,6 +163,7 @@ public class EditProfileFragment extends Fragment {
                             .load(Uri.parse(userList.get(0).getImage()))
                             .into(image);
                     editProfileBinding.setUserEdit(userList.get(0));
+                    imgUri = Uri.parse(userList.get(0).getImage());
                 }
             }
         }

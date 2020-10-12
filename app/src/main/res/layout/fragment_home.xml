@@ -36,154 +36,163 @@
             android:theme="@style/OtherToolbarTheme" />
     </androidx.appcompat.widget.Toolbar>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:layout_marginTop="55dp"
+        android:layout_marginBottom="55dp">
 
-        <TextView
-            android:id="@+id/text_home"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginTop="69dp"
-            android:fontFamily="@font/raleway_bold"
-            android:text="@string/categories"
-            android:textAlignment="center"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="35sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent" >
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardDogs"
-            android:layout_width="153dp"
-            android:layout_height="200dp"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            android:layout_marginStart="36dp"
-            android:layout_marginTop="20dp"
-            app:cardBackgroundColor="?attr/colorAccent"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_home">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/text_home"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:layout_margin="10dp"
-                android:orientation="vertical">
+                android:layout_centerVertical="true"
+                android:layout_marginTop="24dp"
+                android:fontFamily="@font/raleway_bold"
+                android:text="@string/categories"
+                android:textAlignment="center"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="35sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="136dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/dog" />
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardDogs"
+                android:layout_width="153dp"
+                android:layout_height="200dp"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="16dp"
+                app:cardBackgroundColor="?attr/colorAccent"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/cardCats"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_home">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:fontFamily="@font/raleway_medium"
-                    android:text="@string/dogs"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="35sp"
-                    android:textStyle="bold" />
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_margin="10dp"
+                    android:orientation="vertical">
 
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="136dp"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/dog" />
 
-        </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:fontFamily="@font/raleway_medium"
+                        android:text="@string/dogs"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="35sp"
+                        android:textStyle="bold" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardCats"
-            android:layout_width="153dp"
-            android:layout_height="200dp"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            android:layout_marginTop="20dp"
-            app:cardBackgroundColor="?attr/colorAccent"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.879"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_home">
+                </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:layout_margin="10dp"
-                android:orientation="vertical">
+            </androidx.cardview.widget.CardView>
 
-                <ImageView
-                    android:layout_width="89dp"
-                    android:layout_height="136dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/cat" />
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardCats"
+                android:layout_width="153dp"
+                android:layout_height="200dp"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_marginTop="20dp"
+                app:cardBackgroundColor="?attr/colorAccent"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/cardDogs"
+                app:layout_constraintTop_toBottomOf="@+id/text_home">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal"
-                    android:fontFamily="@font/raleway_medium"
-                    android:text="@string/cats"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="35sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardOther"
-            android:layout_width="153dp"
-            android:layout_height="200dp"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            android:layout_marginStart="36dp"
-            android:layout_marginTop="24dp"
-            app:cardBackgroundColor="?attr/colorAccent"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardDogs">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:layout_margin="10dp"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="79dp"
-                    android:layout_height="131dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/rabbit" />
-
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:fontFamily="@font/raleway_medium"
-                    android:text="@string/other"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="35sp"
-                    android:textStyle="bold" />
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_margin="10dp"
+                    android:orientation="vertical">
 
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="89dp"
+                        android:layout_height="136dp"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/cat" />
 
-        </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal"
+                        android:fontFamily="@font/raleway_medium"
+                        android:text="@string/cats"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="35sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardOther"
+                android:layout_width="153dp"
+                android:layout_height="200dp"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                app:cardBackgroundColor="?attr/colorAccent"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/cardCats"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cardDogs">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_margin="10dp"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="79dp"
+                        android:layout_height="131dp"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/rabbit" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:fontFamily="@font/raleway_medium"
+                        android:text="@string/other"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="35sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
 
 
 </FrameLayout>
