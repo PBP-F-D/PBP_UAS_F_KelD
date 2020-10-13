@@ -187,7 +187,6 @@ public class CheckoutFragment extends Fragment {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                Toast.makeText(getContext(), "Item removed from cart", Toast.LENGTH_SHORT).show();
             }
         }
 

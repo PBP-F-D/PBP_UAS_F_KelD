@@ -19,7 +19,7 @@
             android:id="@+id/tv_namaItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="220dp"
+            android:maxWidth="210dp"
             tools:text="Item name"
             android:text="@{cart.namaB}"
             app:layout_constraintStart_toStartOf="parent"
