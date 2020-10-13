@@ -1,14 +1,20 @@
 package com.tubespbp.petshop.ui.profile;
 
+import android.Manifest;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.PermissionChecker;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -52,6 +58,8 @@ public class EditProfileFragment extends Fragment {
 
     MaterialButton btnEdit;
 
+    //Camera
+    private static final int PERMISSION_CODE = 1000;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     Uri imgUri;
 
@@ -103,7 +111,24 @@ public class EditProfileFragment extends Fragment {
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                capturePhoto();
+                //if system os is >= marshmallow, request runtime permission
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (ActivityCompat.checkSelfPermission(getContext(),
+                            android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                            ActivityCompat.checkSelfPermission(getContext(),
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        //request enabling permission
+                        String[] permission = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        //show popup to request permission
+                        requestPermissions(permission, PERMISSION_CODE);
+                    } else {
+                        //permission granted
+                        capturePhoto();
+                    }
+                } else {
+                    //system os < marshmallow
+                    capturePhoto();
+                }
             }
         });
 
@@ -114,6 +139,20 @@ public class EditProfileFragment extends Fragment {
                 update(view);
             }
         });
+    }
+    //handling permission result
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSION_CODE: {
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    capturePhoto(); // permission from popup was granted
+                } else {
+                    Toast.makeText(this.getContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     //Get thumbnail from the photo taken and show it
