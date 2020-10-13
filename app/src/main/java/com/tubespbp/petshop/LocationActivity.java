@@ -79,6 +79,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     //INITIALIZE VIEW/LAYOUT
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
+        setContentView(R.layout.activity_location);
 
         app_preferences = PreferenceManager.getDefaultSharedPreferences(this);
         appColor = app_preferences.getInt("color", 0);
@@ -94,16 +97,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
             setTheme(appTheme);
         }
 
-
-        super.onCreate(savedInstanceState);
-        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
-        setContentView(R.layout.activity_location);
-
-
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
-
     }
 
     //INITIALIZE LAYERS AND MARKERS ON MAP
@@ -193,36 +189,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
             }
         });
-    }
-
-    private void getNavigationRoute(Point origin, Point destination) {
-        NavigationRoute.builder(this)
-                .accessToken(Mapbox.getAccessToken())
-                .origin(origin)
-                .destination(destination)
-                .build()
-                .getRoute(new Callback<DirectionsResponse>() {
-                    @Override
-                    public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
-                        Log.d(DIRECTIONS_ACTIVITY, "Response code: " + response.code());
-                        if (response.body() == null)
-                            Log.e(DIRECTIONS_ACTIVITY, "No routes found, make sure you set the right user and access token.");
-                        else if (response.body().routes().size() < 1)
-                            Log.e(DIRECTIONS_ACTIVITY, "No routes found");
-                        else {
-                            currentRoute = response.body().routes().get(0);
-                            if (navigationMapRoute != null)
-                                navigationMapRoute.removeRoute();
-                            else
-                                navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
-                            navigationMapRoute.addRoute(currentRoute);
-                        }
-                    }
-                    @Override
-                    public void onFailure(Call<DirectionsResponse> call, Throwable t) {
-                        Log.e(DIRECTIONS_ACTIVITY, "Error: " + t.getMessage());
-                    }
-                });
     }
 
     // LOCATION PERMISSION

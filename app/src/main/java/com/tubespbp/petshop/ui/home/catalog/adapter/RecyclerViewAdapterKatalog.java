@@ -80,7 +80,7 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
                 //Creates alert dialog every time the add button is clicked asking for user's input
                 android.app.AlertDialog.Builder alert = new android
                         .app.AlertDialog.Builder(v.getContext())
-                        .setTitle("Masukkan Jumlah");
+                        .setTitle("Insert Quantity");
 
                 final EditText input = new EditText(v.getContext());
                 input.setInputType(InputType.TYPE_CLASS_NUMBER);
