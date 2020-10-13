@@ -81,10 +81,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     //INITIALIZE VIEW/LAYOUT
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
-        setContentView(R.layout.activity_location);
-
         app_preferences = PreferenceManager.getDefaultSharedPreferences(this);
         appColor = app_preferences.getInt("color", 0);
         appTheme = app_preferences.getInt("theme", 0);
@@ -98,6 +94,10 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         }else{
             setTheme(appTheme);
         }
+
+        super.onCreate(savedInstanceState);
+        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
+        setContentView(R.layout.activity_location);
 
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
