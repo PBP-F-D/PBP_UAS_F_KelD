@@ -5,7 +5,9 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,13 +31,6 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
     SharedPreferences shared;
     int idUser;
 
-    Constant constant;
-    SharedPreferences.Editor editor;
-    SharedPreferences app_preferences;
-    int appTheme;
-    int themeColor;
-    int appColor;
-
     public RecyclerViewAdapterKatalog(List<Barang> result) {
         this.result = result;
     }
@@ -49,20 +44,6 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
         //Get idUser from sharedpreferences
         shared = context.getSharedPreferences("getId", Context.MODE_PRIVATE);
         idUser = shared.getInt("idUser", -1);
-
-//        app_preferences = PreferenceManager.getDefaultSharedPreferences(viewGroup.getContext());
-//        appColor = app_preferences.getInt("color", 0);
-//        appTheme = app_preferences.getInt("theme", 0);
-//        themeColor = appColor;
-//        constant.color = appColor;
-//
-//        if (themeColor == 0){
-//             setTheme(Constant.theme);
-//        }else if (appTheme == 0){
-//            setTheme(Constant.theme);
-//        }else{
-//            setTheme(appTheme);
-//        }
 
         KatalogBarangBinding binding = KatalogBarangBinding.inflate(layoutInflater, viewGroup, false);
         return new KatalogViewHolder(binding);
@@ -85,6 +66,9 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
                 final EditText input = new EditText(v.getContext());
                 input.setInputType(InputType.TYPE_CLASS_NUMBER);
                 input.setRawInputType(Configuration.KEYBOARD_12KEY);
+                input.setGravity(Gravity.CENTER);
+                //Prevent character input length more than 9 characters (also to prevent crash)
+                input.setFilters(new InputFilter[] { new InputFilter.LengthFilter(9) });
                 alert.setView(input);
 
                 alert.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {

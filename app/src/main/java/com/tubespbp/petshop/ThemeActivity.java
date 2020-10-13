@@ -29,7 +29,7 @@ public class ThemeActivity extends AppCompatActivity {
     int appColor;
     Constant constant;
 
-    String selectedWarna="Defaut";
+    String selectedWarna="Default";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +50,9 @@ public class ThemeActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_theme);
 
+        if(appColor == 3)
+            appColor = 0;
+
         colors = new Colors();
         button = (Button) findViewById(R.id.button_color);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -67,7 +70,7 @@ public class ThemeActivity extends AppCompatActivity {
         final String[] warna = {"Default", "Red-Gold", "Blue-Purple"};
         AlertDialog.Builder builder = new AlertDialog.Builder(ThemeActivity.this);
         builder.setTitle("Pick One");
-        builder.setSingleChoiceItems(warna, 0, new DialogInterface.OnClickListener() {
+        builder.setSingleChoiceItems(warna, appColor, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 selectedWarna = warna[which];
