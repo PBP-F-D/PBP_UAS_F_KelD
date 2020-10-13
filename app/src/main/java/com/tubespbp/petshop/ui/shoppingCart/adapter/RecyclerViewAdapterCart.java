@@ -88,7 +88,6 @@ public class RecyclerViewAdapterCart extends RecyclerView.Adapter< RecyclerViewA
         return cartList.get(position);
     }
 
-
     private void deleteData(final Cart cart, final CartViewHolder holder){
         class DeleteItem extends AsyncTask<Void, Void, Void> {
 
@@ -111,6 +110,5 @@ public class RecyclerViewAdapterCart extends RecyclerView.Adapter< RecyclerViewA
         DeleteItem delete = new DeleteItem();
         delete.execute();
     }
-
 
 }

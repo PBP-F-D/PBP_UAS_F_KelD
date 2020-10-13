@@ -45,7 +45,11 @@
         android:id="@+id/checkoutFragment"
         android:name="com.tubespbp.petshop.ui.shoppingCart.CheckoutFragment"
         android:label="CheckoutFragment"
-        tools:layout="@layout/fragment_checkout"/>
+        tools:layout="@layout/fragment_checkout">
+        <action
+            android:id="@+id/action_checkoutFragment_to_navigation_dashboard"
+            app:destination="@id/navigation_dashboard" />
+    </fragment>
 
     <fragment
         android:id="@+id/editProfileFragment"

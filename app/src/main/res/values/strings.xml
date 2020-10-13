@@ -27,7 +27,7 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="shopping_cart_normal">Shopping Cart</string>
     <string name="categories">Categories</string>
-    <string name="currency">Rp.</string>
+    <string name="currency">Rp. </string>
     <string name="perpiece">/ pc</string>
     <string name="removecart">Remove from cart</string>
     <string name="quantity">Quantity:</string>
@@ -35,10 +35,12 @@
 
     <string name="checkoutreceipt">Checkout Receipt</string>
     <string name="pawhubpetstore">PawHub Pet Store</string>
+    <string name="customername">Customer : </string>
     <string name="productname">Product Name</string>
     <string name="qty">Qty</string>
     <string name="price">Price</string>
     <string name="total">Total</string>
+    <string name="confirm">Confirm</string>
 
     <string name="edit_user_profile">Edit User Profile</string>
     <string name="enter_your_name">Enter your name</string>

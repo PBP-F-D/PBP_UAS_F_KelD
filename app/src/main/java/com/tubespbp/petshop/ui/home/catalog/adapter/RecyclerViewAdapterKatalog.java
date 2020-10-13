@@ -89,6 +89,9 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
 
                 alert.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
+                        if(input.getText().toString().equals(""))
+                            return; //prevent crash if input is empty
+
                         Integer value = Integer.parseInt(String.valueOf(input.getText()));
                         //adds item to cart if input is greater than zero
                         if(value > 0) {
