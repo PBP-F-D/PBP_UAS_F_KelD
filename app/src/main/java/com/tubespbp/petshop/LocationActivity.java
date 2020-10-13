@@ -4,9 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -148,7 +150,16 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         List<Feature> symbolLayerIconFeatureList = new ArrayList<>();
         symbolLayerIconFeatureList.add(Feature.fromGeometry(
                 Point.fromLngLat(-0.076132,51.508530)));
-        enableLocationComponent(style);
+
+        LocationManager lm = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {}
+
+        if(gps_enabled)
+            enableLocationComponent(style);
 
         final LatLng londonTower = new LatLng(51.508530, -0.076132);
         Marker london = mapboxMap.addMarker(
