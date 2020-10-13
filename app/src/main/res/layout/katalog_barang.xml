@@ -8,9 +8,6 @@
             name="brg"
             type="com.tubespbp.petshop.ui.home.catalog.model.Barang"/>
         <variable
-            name="imgUrl"
-            type="String" />
-        <variable
             name="crt"
             type="com.tubespbp.petshop.ui.shoppingCart.model.Cart"/>
     </data>
@@ -30,7 +27,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:pImage="@{brg.getImgURL()}"
+            app:pImage="@{brg.imgURL}"
             tools:src="@color/lightgrey"/>
 
         <TextView

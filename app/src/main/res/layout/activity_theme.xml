@@ -47,7 +47,7 @@
         android:fontFamily="@font/raleway_bold"
         android:text="@string/theme_picker"
         android:textAlignment="center"
-        android:textColor="@color/colorAccent"
+        android:textColor="?attr/colorAccent"
         android:textSize="28sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

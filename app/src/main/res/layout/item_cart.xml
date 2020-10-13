@@ -8,9 +8,6 @@
         <variable
             name="cart"
             type="com.tubespbp.petshop.ui.shoppingCart.model.Cart"/>
-        <variable
-            name="imgUrlC"
-            type="String" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -27,7 +24,7 @@
             android:layout_height="100dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            app:cImage="@{cart.getImgUrlC()}"
+            app:cImage="@{cart.imgUrlC}"
             app:civ_border_color="#009688"
             app:civ_border_width="2dp"
             app:layout_constraintStart_toStartOf="parent"
