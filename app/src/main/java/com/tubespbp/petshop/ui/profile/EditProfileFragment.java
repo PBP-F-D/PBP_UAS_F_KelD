@@ -56,7 +56,7 @@ public class EditProfileFragment extends Fragment {
     int idUser;
     List<User> userList;
 
-    MaterialButton btnEdit;
+    MaterialButton btnEdit, btnCancel;
 
     //Camera
     private static final int PERMISSION_CODE = 1000;
@@ -106,6 +106,14 @@ public class EditProfileFragment extends Fragment {
         phoneLayout = view.findViewById(R.id.til_phone_number);
         cityLayout = view.findViewById(R.id.til_city);
         countryLayout = view.findViewById(R.id.til_country);
+
+        btnCancel = view.findViewById(R.id.btn_editCancel);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().finish();
+            }
+        });
 
         //Profile image pressed
         image.setOnClickListener(new View.OnClickListener() {

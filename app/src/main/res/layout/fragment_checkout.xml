@@ -143,11 +143,11 @@
                         android:id="@+id/tv_valueItem"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="Qty"
+                        android:layout_marginEnd="105dp"
                         android:text="@string/qty"
-                        android:layout_marginRight="120dp"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Qty" />
 
                     <TextView
                         android:id="@+id/tv_totalItem"

@@ -12,6 +12,9 @@ public class DaftarBarang {
         BARANG.add(Dog3);
         BARANG.add(Cat1);
         BARANG.add(Cat2);
+        BARANG.add(Other1);
+        BARANG.add(Other2);
+        BARANG.add(Other3);
     }
 
     public static final Barang Dog1 = new Barang("DAILY DELIGHT DOG SAVORY LAMB 375 GR", 29000,
@@ -33,5 +36,15 @@ public class DaftarBarang {
     public static final Barang Cat2 = new Barang("DAILY DELIGHT MOUSSE WITH CHICKEN 80 GR", 16000,
             15, "Cat",
             "http://balipetshop.co.id/upload/item/thumb/oGRmy7N6Tj0A9eMFVJG2.png");
+
+    public static final Barang Other1 = new Barang("SHERWOOD PET HEALTH ADULT RABBIT FOOD TIMOTHY PELLET", 15000,
+            15, "Other",
+            "https://images-na.ssl-images-amazon.com/images/I/61ZLYNTjabL._AC_SL300_.jpg");
+    public static final Barang Other2 = new Barang("SMALL PET SELECT RABBIT FOOD PELLETS", 14000,
+            20, "Other",
+            "https://images-na.ssl-images-amazon.com/images/I/61yxdwChYIL._AC_SL300_.jpg");
+    public static final Barang Other3 = new Barang("OMEGA ONE FRESHWATER FLAKES", 13000,
+            13, "Other",
+            "https://images-na.ssl-images-amazon.com/images/I/71a4GlE9auL._AC_SL1500_.jpg");
 
 }

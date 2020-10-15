@@ -148,17 +148,34 @@
                         android:fontFamily="@font/raleway_medium"
                         android:inputType="text" />
                 </com.google.android.material.textfield.TextInputLayout>
-
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_editSubmit"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/submit"
-                    android:fontFamily="@font/raleway_medium"
-                    android:textSize="16sp"
-                    android:layout_gravity="center" />
+                    android:orientation="horizontal"
+                    android:layout_gravity="center">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_editSubmit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/raleway_medium"
+                        android:text="@string/submit"
+                        android:textSize="16sp" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_editCancel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="30dp"
+                        android:fontFamily="@font/raleway_medium"
+                        android:text="@string/cancel"
+                        android:textSize="16sp"
+                        android:layout_marginLeft="20dp"/>
+                </LinearLayout>
+
+
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
