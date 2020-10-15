@@ -111,7 +111,8 @@ public class EditProfileFragment extends Fragment {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().finish();
+                Navigation.findNavController(view).navigate(
+                        R.id.action_editProfileFragment_to_navigation_notifications); //move to profile fragment
             }
         });
 
