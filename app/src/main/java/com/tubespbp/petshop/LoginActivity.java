@@ -1,11 +1,12 @@
 package com.tubespbp.petshop;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -16,10 +17,20 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
-import com.tubespbp.petshop.ui.profile.database.DatabaseClientUser;
+import com.google.gson.GsonBuilder;
+import com.tubespbp.petshop.API.ApiClient;
+import com.tubespbp.petshop.API.ApiInterface;
+import com.tubespbp.petshop.API.User.UserDAO;
+import com.tubespbp.petshop.API.User.UserResponse;
+import com.tubespbp.petshop.ui.profile.ProfileFragment;
 import com.tubespbp.petshop.ui.profile.model.User;
 
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import timber.log.Timber;
 
 public class LoginActivity extends AppCompatActivity {
     MaterialTextView clickHere;
@@ -28,6 +39,8 @@ public class LoginActivity extends AppCompatActivity {
     TextInputEditText email, pass;
     List<User> userList;
     int idUser, currentIdUser =-1;
+    private ProgressDialog progressDialog;
+    private Intent i = null;
 
     public static final int mode = Activity.MODE_PRIVATE;
     private SharedPreferences shared;
@@ -46,6 +59,8 @@ public class LoginActivity extends AppCompatActivity {
         appTheme = app_preferences.getInt("theme", 0);
         themeColor = appColor;
         constant.color = appColor;
+
+        progressDialog = new ProgressDialog(this);
 
         if (themeColor == 0){
             setTheme(Constant.theme);
@@ -92,49 +107,54 @@ public class LoginActivity extends AppCompatActivity {
         final String emailLogin = email.getText().toString();
         final String passLogin = pass.getText().toString();
 
-        if(!emailLogin.isEmpty() || !passLogin.isEmpty()) {
-            class GetUsers extends AsyncTask<Void, Void, List<User>> {
+        if(TextUtils.isEmpty(emailLogin)) {
+            email.setError("Email field is empty!");
+            return;
+        } else if(TextUtils.isEmpty(passLogin)) {
+            pass.setError("Password field is empty");
+            return;
+        } else {
+            progressDialog.show();
+            ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+            Call<UserResponse> req = apiService.login(
+                    email.getText().toString(),
+                    pass.getText().toString());
 
+            req.enqueue(new Callback<UserResponse>() {
                 @Override
-                protected List<User> doInBackground(Void... voids) {
-                    userList = DatabaseClientUser
-                            .getInstance(getApplicationContext())
-                            .getDatabaseUser()
-                            .signUpDAO()
-                            .getAll();
-                    return userList;
-                }
+                public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
 
-                @Override
-                protected void onPostExecute(List<User> users) {
-                    super.onPostExecute(users);
-                    for (int i = 0; i < userList.size(); i++) {
-                        if (emailLogin.equals(userList.get(i).getEmail()) && passLogin.equals(userList.get(i).getPassword())) {
-                            //Edit sharedpreferences (adding user id)
-                            SharedPreferences.Editor editor = shared.edit();
-                            editor.putInt("idUser", userList.get(i).getId());
-                            currentIdUser = userList.get(i).getId(); //save id user to compare it with the next if
-                            editor.apply();
+                    if(response.body().getMessage().equals("Authenticated")) {
+                        Toast.makeText(LoginActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
 
-                            Log.d("ID USER LOGIN:", String.valueOf(userList.get(i).getId()));
-
-                            //Intent move to main activity
-                            Intent moveToMain = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(moveToMain);
+                        UserDAO user = response.body().getUsers().get(0);
+                        if(user.getEmail().equalsIgnoreCase("admin")) {
+                            i = new Intent(LoginActivity.this, MainActivity.class);
+                        } else {
+                            i = new Intent(LoginActivity.this, MainActivity.class);
+                            i.putExtra("id", user.getId());
                             finish();
                         }
+
+                        startActivity(i);
+                        SharedPreferences.Editor editor = shared.edit();
+
+                        editor.putString("id", user.getId());
+                        editor.apply();
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Username / Password Salah", Toast.LENGTH_SHORT).show();
                     }
-                    if(currentIdUser == -1) { //if currentIdUser still -1, that means no user matched
-                        Toast.makeText(getApplicationContext(), "Email/Password is wrong!",Toast.LENGTH_SHORT).show();
-                    }
+
+                    progressDialog.dismiss();
                 }
-            }
 
-            GetUsers get = new GetUsers();
-            get.execute();
-
-        } else {
-            Toast.makeText(this, "Email/Password is wrong!",Toast.LENGTH_SHORT).show();
+                @Override
+                public void onFailure(Call<UserResponse> call, Throwable t) {
+                    Toast.makeText(LoginActivity.this, "Gagal Login", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                    Log.i("LOGIN", "Msg: " + t.getMessage());
+                }
+            });
         }
     }
 }
