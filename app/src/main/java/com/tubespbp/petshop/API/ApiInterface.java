@@ -15,8 +15,8 @@ public interface ApiInterface {
 //    @GET("user")
 //    Call<UserResponse> getAllUser();
 
-    @POST("login")
     @FormUrlEncoded
+    @POST("login")
     Call<UserResponse> login(@Field("email") String email,
                              @Field("password") String password);
 

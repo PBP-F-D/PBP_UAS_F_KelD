@@ -28,6 +28,10 @@ import com.tubespbp.petshop.API.User.UserResponse;
 import com.tubespbp.petshop.ui.profile.database.DatabaseClientUser;
 import com.tubespbp.petshop.ui.profile.model.User;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,11 +69,11 @@ public class SignUpActivity extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(this);
 
-        if (themeColor == 0){
+        if (themeColor == 0) {
             setTheme(Constant.theme);
-        }else if (appTheme == 0){
+        } else if (appTheme == 0) {
             setTheme(Constant.theme);
-        }else{
+        } else {
             setTheme(appTheme);
         }
 
@@ -115,9 +119,9 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //if system os is >= marshmallow, request runtime permission
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED ||
-                        checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED ||
+                            checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
                         //request enabling permission
                         String[] permission = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
                         //show popup to request permission
@@ -133,13 +137,14 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
     }
+
     //handling permission result
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case PERMISSION_CODE: {
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     capturePhoto(); // permission from popup was granted
                 } else {
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
@@ -161,7 +166,7 @@ public class SignUpActivity extends AppCompatActivity {
     //Camera
     public void capturePhoto() {
         ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE,"New Picture");
+        values.put(MediaStore.Images.Media.TITLE, "New Picture");
         values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
         imgUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         // Create the camera_intent ACTION_IMAGE_CAPTURE. it will open the camera for capture the image
@@ -187,7 +192,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     //Database add user
-    private void addUser(){
+    private void addUser() {
         final String emailSign = email.getText().toString();
         final String nameSign = name.getText().toString();
         final String passSign = pass.getText().toString();
@@ -199,46 +204,57 @@ public class SignUpActivity extends AppCompatActivity {
         if (imgUri == null) {
             Toast.makeText(this, "Upload your image", Toast.LENGTH_SHORT).show();
         }
-        if(emailSign.isEmpty()) emailLayout.setError("Please enter your email");
+        if (emailSign.isEmpty()) emailLayout.setError("Please enter your email");
         else if (!isEmailValid(emailSign)) emailLayout.setError("Please enter a valid email");
         else emailLayout.setError(null);
 
-        if(nameSign.isEmpty()) nameLayout.setError("Please enter your name");
+        if (nameSign.isEmpty()) nameLayout.setError("Please enter your name");
         else nameLayout.setError(null);
 
-        if(passSign.isEmpty()) passLayout.setError("Please enter your password");
+        if (passSign.isEmpty()) passLayout.setError("Please enter your password");
         else passLayout.setError(null);
 
-        if(phoneSign.isEmpty()) phoneLayout.setError("Please enter your phone number");
+        if (phoneSign.isEmpty()) phoneLayout.setError("Please enter your phone number");
         else phoneLayout.setError(null);
 
-        if(citySign.isEmpty()) cityLayout.setError("Please enter your city");
+        if (citySign.isEmpty()) cityLayout.setError("Please enter your city");
         else cityLayout.setError(null);
 
-        if(countrySign.isEmpty()) countryLayout.setError("Please enter your country");
+        if (countrySign.isEmpty()) countryLayout.setError("Please enter your country");
         else countryLayout.setError(null);
 
-        if(imgUri != null && isEmailValid(emailSign) && !emailSign.isEmpty() && !nameSign.isEmpty() && !passSign.isEmpty()
+        if (imgUri != null && isEmailValid(emailSign) && !emailSign.isEmpty() && !nameSign.isEmpty() && !passSign.isEmpty()
                 && !phoneSign.isEmpty() && !citySign.isEmpty() && !countrySign.isEmpty()) {
             progressDialog.show();
 
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
             Call<UserResponse> add = apiService.register(nameSign, emailSign, passSign, phoneSign, citySign, countrySign, imgUri.toString());
+            System.out.println("Masuk call response");
 
             add.enqueue(new Callback<UserResponse>() {
                 @Override
                 public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                    if (response.body().getMessage().equalsIgnoreCase("Register Success")) {
+                    //If response's code is 200
+                    if (response.isSuccessful()) {
                         Toast.makeText(SignUpActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        System.out.println("Masuk on response register sukses");
                         progressDialog.dismiss();
                         onBackPressed();
-                    } else {
-                        Toast.makeText(SignUpActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    } else {  //If response's code is 4xx (error)
+                        try {
+                            JSONObject error = new JSONObject(response.errorBody().string());
+                            Toast.makeText(SignUpActivity.this, error.optString("message"), Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 
                 @Override
                 public void onFailure(Call<UserResponse> call, Throwable t) {
+
                     Toast.makeText(SignUpActivity.this, "Registration Failed", Toast.LENGTH_SHORT).show();
                     progressDialog.dismiss();
                 }

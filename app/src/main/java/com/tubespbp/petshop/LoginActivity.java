@@ -25,6 +25,10 @@ import com.tubespbp.petshop.API.User.UserResponse;
 import com.tubespbp.petshop.ui.profile.ProfileFragment;
 import com.tubespbp.petshop.ui.profile.model.User;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -38,9 +42,9 @@ public class LoginActivity extends AppCompatActivity {
     TextInputLayout emailLayout, passLayout;
     TextInputEditText email, pass;
     List<User> userList;
-    int idUser, currentIdUser =-1;
+    int idUser, currentIdUser = -1;
     private ProgressDialog progressDialog;
-    private Intent i = null;
+
 
     public static final int mode = Activity.MODE_PRIVATE;
     private SharedPreferences shared;
@@ -62,11 +66,11 @@ public class LoginActivity extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(this);
 
-        if (themeColor == 0){
+        if (themeColor == 0) {
             setTheme(Constant.theme);
-        }else if (appTheme == 0){
+        } else if (appTheme == 0) {
             setTheme(Constant.theme);
-        }else{
+        } else {
             setTheme(appTheme);
         }
 
@@ -107,10 +111,10 @@ public class LoginActivity extends AppCompatActivity {
         final String emailLogin = email.getText().toString();
         final String passLogin = pass.getText().toString();
 
-        if(TextUtils.isEmpty(emailLogin)) {
+        if (TextUtils.isEmpty(emailLogin)) {
             email.setError("Email field is empty!");
             return;
-        } else if(TextUtils.isEmpty(passLogin)) {
+        } else if (TextUtils.isEmpty(passLogin)) {
             pass.setError("Password field is empty");
             return;
         } else {
@@ -123,29 +127,43 @@ public class LoginActivity extends AppCompatActivity {
             req.enqueue(new Callback<UserResponse>() {
                 @Override
                 public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-
-                    if(response.body().getMessage().equals("Authenticated")) {
+                    //If response's code is 200
+                    if (response.isSuccessful()) {
                         Toast.makeText(LoginActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
+                        System.out.println("TEST SAMPE SINI");
+                        UserDAO user = response.body().getUsers();
 
-                        UserDAO user = response.body().getUsers().get(0);
-                        if(user.getEmail().equalsIgnoreCase("admin")) {
-                            i = new Intent(LoginActivity.this, MainActivity.class);
-                        } else {
-                            i = new Intent(LoginActivity.this, MainActivity.class);
-                            i.putExtra("id", user.getId());
-                            finish();
-                        }
-
-                        startActivity(i);
                         SharedPreferences.Editor editor = shared.edit();
-
                         editor.putString("id", user.getId());
+                        System.out.println("ID user on response " + user.getId());
                         editor.apply();
-                    } else {
-                        Toast.makeText(LoginActivity.this, "Username / Password Salah", Toast.LENGTH_SHORT).show();
-                    }
+                        System.out.println("Test setelah editor apply");
 
-                    progressDialog.dismiss();
+                        if (user.getEmail().equalsIgnoreCase("admin")) {
+                            System.out.println("admin areaaa");
+                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(i);
+                        } else {
+                            System.out.println("non admin areaaa");
+                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                            System.out.println("non admin area setelah put extra");
+                            startActivity(i);
+                            System.out.println("non admin area setelah start activity");
+                            finish();
+                            System.out.println("non admin area setelah finish");
+                        }
+                    } else { //If response's code is 4xx (error)
+                        try {
+                            JSONObject error = new JSONObject(response.errorBody().string());
+                            Toast.makeText(LoginActivity.this, error.optString("message"), Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        progressDialog.dismiss();
+                    }
                 }
 
                 @Override

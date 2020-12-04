@@ -8,13 +8,13 @@ import java.util.List;
 public class UserResponse {
     @SerializedName("user")
     @Expose
-    private List<UserDAO> users = null;
+    private UserDAO users = null;
 
     @SerializedName("message")
     @Expose
     private String message;
 
-    public List<UserDAO> getUsers()
+    public UserDAO getUsers()
     {
         return users;
     }
@@ -24,7 +24,7 @@ public class UserResponse {
         return message;
     }
 
-    public void setUsers(List<UserDAO> users)
+    public void setUsers(UserDAO users)
     {
         this.users = users;
     }

@@ -25,7 +25,7 @@ public class UserDAO {
     private String country;
 
     @SerializedName("password")
-    private String password;
+    private String password = null;
 
     public UserDAO(String id, String name, String email, String phone, String photo, String city, String country, String password) {
         this.id = id;
