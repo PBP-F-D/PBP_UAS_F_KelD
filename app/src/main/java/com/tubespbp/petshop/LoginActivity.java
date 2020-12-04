@@ -135,7 +135,7 @@ public class LoginActivity extends AppCompatActivity {
                         UserDAO user = response.body().getUsers();
 
                         SharedPreferences.Editor editor = shared.edit();
-                        editor.putString("id", user.getId());
+                        editor.putInt("idUser", Integer.parseInt(user.getId()));
                         System.out.println("ID user on response " + user.getId());
                         editor.apply();
                         System.out.println("Test setelah editor apply");
