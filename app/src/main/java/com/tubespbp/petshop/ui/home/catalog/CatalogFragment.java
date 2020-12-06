@@ -1,5 +1,7 @@
 package com.tubespbp.petshop.ui.home.catalog;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -14,7 +16,15 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.tubespbp.petshop.API.CatalogAPI;
 import com.tubespbp.petshop.Constant;
 import com.tubespbp.petshop.MainActivity;
 import com.tubespbp.petshop.R;
@@ -25,8 +35,14 @@ import com.tubespbp.petshop.ui.home.catalog.model.Barang;
 import com.tubespbp.petshop.ui.home.catalog.model.DaftarBarang;
 import com.tubespbp.petshop.ui.shoppingCart.model.Cart;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.android.volley.Request.Method.GET;
 
 public class CatalogFragment extends Fragment {
 
@@ -35,15 +51,17 @@ public class CatalogFragment extends Fragment {
     private RecyclerViewAdapterKatalog adapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private FragmentCatalogBinding catalogBinding, binding;
+    private View view;
 
     public String name;
 
     Constant constant;
     SharedPreferences.Editor editor;
-    SharedPreferences app_preferences;
+    SharedPreferences app_preferences, shared;
     int appTheme;
     int themeColor;
     int appColor;
+    String token;
 
     public CatalogFragment() {
         // Required empty public constructor
@@ -70,7 +88,7 @@ public class CatalogFragment extends Fragment {
             main.setTheme(appTheme);
         }
 
-        View view = catalogBinding.getRoot();
+        view = catalogBinding.getRoot();
 
         //Mengambil Bundle dari HomeFragment
         if (getArguments() != null)
@@ -78,8 +96,12 @@ public class CatalogFragment extends Fragment {
         else
             name = "";
 
+        shared = getActivity().getSharedPreferences("getId", Context.MODE_PRIVATE);
+        token = shared.getString("token", null);
+
         //Daftar Semua List Barang
-        ListBarang = new DaftarBarang().BARANG;
+        ListBarang = new ArrayList<Barang>();
+        getBarang();
 
         //List barang baru yang dikosongkan
         ArrayList<Barang> newList = new ArrayList<Barang>();
@@ -121,5 +143,61 @@ public class CatalogFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    public void getBarang() {
+        RequestQueue queue = Volley.newRequestQueue(view.getContext());
+
+        final ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(view.getContext());
+        progressDialog.setMessage("loading....");
+        progressDialog.setTitle("Menampilkan data barang");
+        progressDialog.setProgressStyle(android.app.ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
+
+        JSONObject parameters = new JSONObject();
+        try {
+            parameters.put("Authorization", "Bearer " + token);
+        } catch (Exception e) {
+        }
+        final JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, CatalogAPI.URL_SELECT
+                , null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                progressDialog.dismiss();
+                try {
+                    JSONArray jsonArray = response.getJSONArray("data");
+
+                    if(!ListBarang.isEmpty())
+                        ListBarang.clear();
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+
+                        String nama     = jsonObject.optString("nama_barang");
+                        Double harga    = jsonObject.optDouble("harga_barang");
+                        Integer stok    = jsonObject.optInt("stok_barang");
+                        String kategori = jsonObject.optString("kategori_barang");
+                        String gambar   = jsonObject.optString("img_barang");
+
+                        Barang barang = new Barang(nama,harga,stok,kategori,gambar);
+                        ListBarang.add(barang);
+                    }
+                    adapter.notifyDataSetChanged();
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                Toast.makeText(view.getContext(), response.optString("message"),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                Toast.makeText(view.getContext(), error.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+        queue.add(stringRequest);
     }
 }

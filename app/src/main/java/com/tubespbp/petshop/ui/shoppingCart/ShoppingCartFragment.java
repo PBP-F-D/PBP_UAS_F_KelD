@@ -1,5 +1,6 @@
 package com.tubespbp.petshop.ui.shoppingCart;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -19,7 +20,13 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.button.MaterialButton;
+import com.tubespbp.petshop.API.CartAPI;
 import com.tubespbp.petshop.Constant;
 import com.tubespbp.petshop.MainActivity;
 import com.tubespbp.petshop.R;
@@ -28,8 +35,14 @@ import com.tubespbp.petshop.ui.shoppingCart.adapter.RecyclerViewAdapterCart;
 import com.tubespbp.petshop.ui.shoppingCart.database.DatabaseClient;
 import com.tubespbp.petshop.ui.shoppingCart.model.Cart;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.android.volley.Request.Method.GET;
 
 public class ShoppingCartFragment extends Fragment {
 
@@ -39,10 +52,13 @@ public class ShoppingCartFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private FragmentShoppingCartBinding shoppingCartBinding;
     private MaterialButton checkOutBtn;
+    private View view;
 
     private ShoppingCartViewModel shoppingCartViewModel;
     private SharedPreferences shared;
     int idUser;
+
+    String token;
 
     Constant constant;
     SharedPreferences.Editor editor;
@@ -59,7 +75,7 @@ public class ShoppingCartFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         shoppingCartBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_shopping_cart, container, false);
-        View view = shoppingCartBinding.getRoot();
+        view = shoppingCartBinding.getRoot();
 
         MainActivity main = (MainActivity)getActivity();
 
@@ -81,6 +97,7 @@ public class ShoppingCartFragment extends Fragment {
         //Get idUser from sharedpreferences
         shared = getActivity().getSharedPreferences("getId", Context.MODE_PRIVATE);
         idUser = shared.getInt("idUser", -1);
+        token = shared.getString("token", null);
 
         //Recycler View
         recyclerView = shoppingCartBinding.rvFollow;
@@ -118,32 +135,104 @@ public class ShoppingCartFragment extends Fragment {
         return view;
     }
 
-    public void getCart(){
-        class GetCart extends AsyncTask<Void, Void, List<Cart>> {
+//    public void getCart(){
+//        class GetCart extends AsyncTask<Void, Void, List<Cart>> {
+//
+//            @Override
+//            protected void onPostExecute(List<Cart> carts) {
+//                super.onPostExecute(carts);
+//                adapter = new RecyclerViewAdapterCart(getContext(), carts);
+//                recyclerView.setAdapter(adapter);
+//                if (carts.isEmpty()){
+//                    Toast.makeText(getContext(), "Empty List", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            @Override
+//            protected List<Cart> doInBackground(Void... voids) {
+//                List<Cart> userCart = DatabaseClient
+//                        .getInstance(getContext())
+//                        .getDatabase()
+//                        .userDAO()
+//                        .getUserCart(idUser);
+//                return userCart;
+//            }
+//        }
+//
+//        GetCart get = new GetCart();
+//        get.execute();
+//    }
 
-            @Override
-            protected void onPostExecute(List<Cart> carts) {
-                super.onPostExecute(carts);
-                adapter = new RecyclerViewAdapterCart(getContext(), carts);
-                recyclerView.setAdapter(adapter);
-                if (carts.isEmpty()){
-                    Toast.makeText(getContext(), "Empty List", Toast.LENGTH_SHORT).show();
-                }
-            }
+    public void getCart() {
+        //Tambahkan tampil buku disini
+        RequestQueue queue = Volley.newRequestQueue(view.getContext());
 
-            @Override
-            protected List<Cart> doInBackground(Void... voids) {
-                List<Cart> userCart = DatabaseClient
-                        .getInstance(getContext())
-                        .getDatabase()
-                        .userDAO()
-                        .getUserCart(idUser);
-                return userCart;
-            }
+        //Meminta tanggapan string dari URL yang telah disediakan menggunakan method GET
+        //untuk request ini tidak memerlukan parameter
+        final ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(view.getContext());
+        progressDialog.setMessage("loading....");
+        progressDialog.setTitle("Menampilkan data cart");
+        progressDialog.setProgressStyle(android.app.ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
+
+        JSONObject parameters = new JSONObject();
+        try {
+            parameters.put("Authorization", "Bearer " + token);
+            parameters.put("Content-Type","application/x-www-form-urlencoded");
+        } catch (Exception e) {
         }
+        final JsonObjectRequest stringRequest = new JsonObjectRequest(GET, CartAPI.URL_SELECT
+                , parameters, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                //Disini bagian jika response jaringan berhasil tidak terdapat ganguan/error
+                progressDialog.dismiss();
+                try {
+                    //Mengambil data response json object yang berupa data dataBuku
+                    JSONArray jsonArray = response.getJSONArray("data");
 
-        GetCart get = new GetCart();
-        get.execute();
+                    if(!ListCart.isEmpty())
+                        ListCart.clear();
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        //Mengubah data jsonArray tertentu menjadi json Object
+                        JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+
+                        int userbarang      = jsonObject.optInt("user_barang");
+                        String namaBarang   = jsonObject.optString("nama_barang");
+                        Double hargaBarang  = jsonObject.optDouble("harga_barang");
+                        Integer jumlah      = jsonObject.optInt("jmlbeli_barang");
+                        String statusBarang = jsonObject.optString("status_barang");
+                        String gambar       = jsonObject.optString("img_barang");
+
+                        if(idUser == userbarang) {
+                            //Membuat objek cart
+                            Cart cart = new Cart(userbarang, namaBarang, hargaBarang, jumlah, statusBarang, gambar);
+                            //Menambahkan objek user tadi ke list cart
+                            ListCart.add(cart);
+                        }
+                    }
+                    adapter.notifyDataSetChanged();
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                Toast.makeText(view.getContext(), response.optString("message"),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Disini bagian jika response jaringan terdapat ganguan/error
+                progressDialog.dismiss();
+                Toast.makeText(view.getContext(), error.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //Disini proses penambahan request yang sudah kita buat ke reuest queue yang sudah dideklarasi
+        queue.add(stringRequest);
+
     }
 
 }

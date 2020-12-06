@@ -43,6 +43,7 @@ public class ProfileFragment extends Fragment {
     private MaterialTextView email, name, username, phone, city, country;
     private CircleImageView image;
     private List<User> userList;
+    private String sIdUser, sName, sEmail, sCountry, sCity, sPhone, sGambar;
     Bitmap[] array;
 
     SharedPreferences shared;
@@ -86,7 +87,30 @@ public class ProfileFragment extends Fragment {
         idUser = shared.getInt("idUser", -1);
         Log.d("ID USER Profile", String.valueOf(idUser));
 
+//        name = root.findViewById(R.id.tv_nama);
+//        email = root.findViewById(R.id.et_email);
+//        phone = root.findViewById(R.id.et_phone);
+//        country = root.findViewById(R.id.et_country);
+//        city = root.findViewById(R.id.et_city);
         image = root.findViewById(R.id.profile_image_profile);
+
+//        sIdUser = getArguments().getString("id", "");
+//        sName = getArguments().getString("name", "");
+//        sEmail = getArguments().getString("email", "");
+//        sCountry = getArguments().getString("country", "");
+//        sCity = getArguments().getString("city", "");
+//        sPhone = getArguments().getString("phone", "");
+//        sGambar = getArguments().getString("image", "");
+//
+//        name.setText(sName);
+//        email.setText(sEmail);
+//        country.setText(sCountry);
+//        city.setText(sCity);
+//        phone.setText(sPhone);
+//
+//        Glide.with(getContext())
+//                .load(Uri.parse(sGambar))
+//                .into(image);
 
         getUsers();
 

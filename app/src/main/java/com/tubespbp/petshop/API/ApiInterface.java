@@ -1,11 +1,13 @@
 package com.tubespbp.petshop.API;
 
 import com.tubespbp.petshop.API.User.UserResponse;
+import com.tubespbp.petshop.ui.profile.model.User;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
@@ -29,6 +31,12 @@ public interface ApiInterface {
                                 @Field("city") String city,
                                 @Field("phone") String phone,
                                 @Field("img_user") String photo);
+
+    @GET("authToken")
+    Call<UserResponse> getToken(@Header("Authorization") String authToken);
+
+    @GET("logout")
+    Call<UserResponse> logout();
 
 //    TODO: No Route (no update route in api)
 //    @POST("user/update/{id}")

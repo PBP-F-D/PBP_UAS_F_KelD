@@ -45,6 +45,8 @@ public class LoginActivity extends AppCompatActivity {
     int idUser, currentIdUser = -1;
     private ProgressDialog progressDialog;
 
+    private static String token;
+
 
     public static final int mode = Activity.MODE_PRIVATE;
     private SharedPreferences shared;
@@ -118,6 +120,8 @@ public class LoginActivity extends AppCompatActivity {
             pass.setError("Password field is empty");
             return;
         } else {
+            progressDialog.setMessage("Logging In....");
+            progressDialog.setProgressStyle(android.app.ProgressDialog.STYLE_SPINNER);
             progressDialog.show();
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
             Call<UserResponse> req = apiService.login(
@@ -134,9 +138,15 @@ public class LoginActivity extends AppCompatActivity {
                         System.out.println("TEST SAMPE SINI");
                         UserDAO user = response.body().getUsers();
 
+                        //get token
+                        token = response.body().getToken();
+
                         SharedPreferences.Editor editor = shared.edit();
                         editor.putInt("idUser", Integer.parseInt(user.getId()));
                         System.out.println("ID user on response " + user.getId());
+
+                        //save token
+                        editor.putString("token", token);
                         editor.apply();
                         System.out.println("Test setelah editor apply");
 
@@ -148,6 +158,13 @@ public class LoginActivity extends AppCompatActivity {
                             System.out.println("non admin areaaa");
                             Intent i = new Intent(getApplicationContext(), MainActivity.class);
                             System.out.println("non admin area setelah put extra");
+                            i.putExtra("id",user.getId());
+                            i.putExtra("name",user.getName());
+                            i.putExtra("email",user.getEmail());
+                            i.putExtra("country",user.getCountry());
+                            i.putExtra("phone",user.getPhone());
+                            i.putExtra("city",user.getCity());
+                            i.putExtra("image",user.getPhoto());
                             startActivity(i);
                             System.out.println("non admin area setelah start activity");
                             finish();

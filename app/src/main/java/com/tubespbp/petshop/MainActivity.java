@@ -2,6 +2,7 @@ package com.tubespbp.petshop;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,15 +14,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.tubespbp.petshop.API.ApiClient;
+import com.tubespbp.petshop.API.ApiInterface;
+import com.tubespbp.petshop.API.User.UserResponse;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
     int appTheme;
     int themeColor;
     int appColor;
+    private ProgressDialog progressDialog;
+
+    String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
         appTheme = app_preferences.getInt("theme", 0);
         themeColor = appColor;
         constant.color = appColor;
+
+        progressDialog = new ProgressDialog(this);
 
         if (themeColor == 0){
             setTheme(Constant.theme);
@@ -54,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
         shared = getSharedPreferences("getId", Context.MODE_PRIVATE);
         idUser = shared.getInt("idUser", -1);
+        token = shared.getString("token", null);
 
         if(idUser != -1) {
             BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -98,14 +118,7 @@ public class MainActivity extends AppCompatActivity {
                                 intent = new Intent(getApplicationContext(), ThemeActivity.class);
                                 startActivity(intent);
                             } else if(item.getItemId()==R.id.menu_logout) {
-                                //Edit sharedpreferences
-                                SharedPreferences.Editor editor = shared.edit();
-                                editor.putInt("idUser", -1);
-                                editor.apply();
-                                Log.d("Id USER LOG OUT", String.valueOf(idUser));
-                                Intent moveToLogin = new Intent(getApplicationContext(), LoginActivity.class);
-                                startActivity(moveToLogin);
-                                finish();
+                                logout();
                             }
                             return true;
                         }
@@ -119,6 +132,54 @@ public class MainActivity extends AppCompatActivity {
             startActivity(moveToLogin);
             finish();
         }
+    }
+
+    public void logout() {
+        progressDialog.setMessage("Logging Out....");
+        progressDialog.setProgressStyle(android.app.ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
+
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        Call<UserResponse> logout = apiService.logout();
+        System.out.println("Masuk call response");
+
+        logout.enqueue(new Callback<UserResponse>() {
+            @Override
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                //If response's code is 200
+                if (response.isSuccessful()) {
+                    //Edit sharedpreferences
+                    SharedPreferences.Editor editor = shared.edit();
+                    editor.putInt("idUser", -1);
+                    editor.putString("token", null);
+                    editor.apply();
+                    Log.d("Id USER LOG OUT", String.valueOf(idUser));
+                    Toast.makeText(MainActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    System.out.println("Masuk on response logout");
+                    progressDialog.dismiss();
+
+                    Intent moveToLogin = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(moveToLogin);
+                    finish();
+                } else {  //If response's code is 4xx (error)
+                    try {
+                        JSONObject error = new JSONObject(response.errorBody().string());
+                        Toast.makeText(MainActivity.this, error.optString("message"), Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    progressDialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserResponse> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Logout Failed", Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+            }
+        });
     }
 
 }

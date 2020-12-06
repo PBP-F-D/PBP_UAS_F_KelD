@@ -225,6 +225,9 @@ public class SignUpActivity extends AppCompatActivity {
 
         if (imgUri != null && isEmailValid(emailSign) && !emailSign.isEmpty() && !nameSign.isEmpty() && !passSign.isEmpty()
                 && !phoneSign.isEmpty() && !citySign.isEmpty() && !countrySign.isEmpty()) {
+
+            progressDialog.setMessage("Processing....");
+            progressDialog.setProgressStyle(android.app.ProgressDialog.STYLE_SPINNER);
             progressDialog.show();
 
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
@@ -249,6 +252,7 @@ public class SignUpActivity extends AppCompatActivity {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        progressDialog.dismiss();
                     }
                 }
 

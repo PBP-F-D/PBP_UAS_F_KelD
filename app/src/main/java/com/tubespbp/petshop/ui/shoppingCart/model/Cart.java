@@ -34,8 +34,24 @@ public class Cart implements Serializable {
     @ColumnInfo(name = "totalHarga")
     public double totalB;
 
+    @ColumnInfo(name = "statusBarang")
+    public String statusB;
+
     @ColumnInfo(name = "imgUrlCart")
     public String imgUrlC;
+
+    public Cart() {
+        //
+    }
+
+    public Cart(int idUser, String namaB, Double hargaB, int jumlahB, String statusB, String imgUrlC) {
+        this.idUser = idUser;
+        this.namaB = namaB;
+        this.hargaB = hargaB;
+        this.jumlahB = jumlahB;
+        this.statusB = statusB;
+        this.imgUrlC = imgUrlC;
+    }
 
     public int getId() {
         return id;

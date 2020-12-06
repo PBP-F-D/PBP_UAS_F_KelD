@@ -14,6 +14,10 @@ public class UserResponse {
     @Expose
     private String message;
 
+    @SerializedName("access_token")
+    @Expose
+    private String token;
+
     public UserDAO getUsers()
     {
         return users;
@@ -32,5 +36,13 @@ public class UserResponse {
     public void setMessage(String message)
     {
         this.message = message;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
