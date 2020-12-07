@@ -30,9 +30,21 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
     private List<Barang> result;
     SharedPreferences shared;
     int idUser;
+    private RecyclerViewAdapterKatalog.deleteItemListener mListener;
 
     public RecyclerViewAdapterKatalog(List<Barang> result) {
         this.result = result;
+    }
+
+    public RecyclerViewAdapterKatalog(Context context, List<Barang> result,
+                          RecyclerViewAdapterKatalog.deleteItemListener mListener) {
+        this.context            = context;
+        this.result             = result;
+        this.mListener          = mListener;
+    }
+
+    public interface deleteItemListener {
+        void deleteItem( Boolean delete);
     }
 
     @NonNull

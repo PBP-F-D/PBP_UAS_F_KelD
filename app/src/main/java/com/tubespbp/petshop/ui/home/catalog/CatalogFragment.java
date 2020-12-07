@@ -22,7 +22,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.tubespbp.petshop.API.CatalogAPI;
 import com.tubespbp.petshop.Constant;
@@ -46,12 +49,14 @@ import static com.android.volley.Request.Method.GET;
 
 public class CatalogFragment extends Fragment {
 
-    private ArrayList<Barang> ListBarang, newList;
+    private List<Barang> ListBarang;
+    private ArrayList<Barang> newList;
     private RecyclerView recyclerView;
     private RecyclerViewAdapterKatalog adapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private FragmentCatalogBinding catalogBinding, binding;
     private View view;
+    private RequestQueue queue;
 
     public String name;
 
@@ -88,7 +93,8 @@ public class CatalogFragment extends Fragment {
             main.setTheme(appTheme);
         }
 
-        view = catalogBinding.getRoot();
+//        view = catalogBinding.getRoot();
+        view = inflater.inflate(R.layout.fragment_catalog, container, false);
 
         //Mengambil Bundle dari HomeFragment
         if (getArguments() != null)
@@ -99,12 +105,20 @@ public class CatalogFragment extends Fragment {
         shared = getActivity().getSharedPreferences("getId", Context.MODE_PRIVATE);
         token = shared.getString("token", null);
 
-        //Daftar Semua List Barang
-        ListBarang = new ArrayList<Barang>();
-        getBarang();
-
         //List barang baru yang dikosongkan
-        ArrayList<Barang> newList = new ArrayList<Barang>();
+        newList = new ArrayList<Barang>();
+        //Recycler View
+        recyclerView = catalogBinding.rvKatalog;
+
+        //Menampilkan list barang baru
+        adapter = new RecyclerViewAdapterKatalog(newList);
+        recyclerView.setAdapter(adapter);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setHasFixedSize(true);
+
+        //Daftar Semua List Barang
+        getBarang();
 
         //Membandingkan nama/kategori supaya dimasukkan ke list baru
         switch(name) {
@@ -127,16 +141,6 @@ public class CatalogFragment extends Fragment {
                 break;
         }
 
-        //Recycler View
-        recyclerView = catalogBinding.rvKatalog;
-
-        //Menampilkan list barang baru
-        adapter = new RecyclerViewAdapterKatalog(newList);
-        recyclerView.setAdapter(adapter);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setHasFixedSize(true);
-
         return view;
     }
 
@@ -146,12 +150,13 @@ public class CatalogFragment extends Fragment {
     }
 
     public void getBarang() {
-        RequestQueue queue = Volley.newRequestQueue(view.getContext());
+        ListBarang = new ArrayList<Barang>();
+        queue = Volley.newRequestQueue(view.getContext());
 
         final ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(view.getContext());
         progressDialog.setMessage("loading....");
-        progressDialog.setTitle("Menampilkan data barang");
+        progressDialog.setTitle("Menampilkan data catalog");
         progressDialog.setProgressStyle(android.app.ProgressDialog.STYLE_SPINNER);
         progressDialog.show();
 
@@ -160,8 +165,8 @@ public class CatalogFragment extends Fragment {
             parameters.put("Authorization", "Bearer " + token);
         } catch (Exception e) {
         }
-        final JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, CatalogAPI.URL_SELECT
-                , null, new Response.Listener<JSONObject>() {
+        final JsonObjectRequest stringRequest = new JsonObjectRequest(GET, CatalogAPI.URL_SELECT,
+                null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 progressDialog.dismiss();
@@ -174,13 +179,14 @@ public class CatalogFragment extends Fragment {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = (JSONObject) jsonArray.get(i);
 
+                        int idBarang    = jsonObject.optInt("id");
                         String nama     = jsonObject.optString("nama_barang");
-                        Double harga    = jsonObject.optDouble("harga_barang");
-                        Integer stok    = jsonObject.optInt("stok_barang");
+                        double harga    = jsonObject.optDouble("harga_barang");
+                        int stok        = jsonObject.optInt("stok_barang");
                         String kategori = jsonObject.optString("kategori_barang");
                         String gambar   = jsonObject.optString("img_barang");
 
-                        Barang barang = new Barang(nama,harga,stok,kategori,gambar);
+                        Barang barang = new Barang(idBarang, nama,harga,stok,kategori,gambar);
                         ListBarang.add(barang);
                     }
                     adapter.notifyDataSetChanged();

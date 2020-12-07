@@ -7,7 +7,18 @@ import androidx.databinding.BindingAdapter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
-public class Barang {
+import java.io.Serializable;
+
+public class Barang implements Serializable {
+    public int getIdBarang() {
+        return idBarang;
+    }
+
+    public void setIdBarang(int idBarang) {
+        this.idBarang = idBarang;
+    }
+
+    private int idBarang;
     public String nama;
     public double harga;
     public int stok;
@@ -15,6 +26,15 @@ public class Barang {
     public String imgURL;
 
     public Barang(String nama, double harga, int stok, String kategori, String imgURL) {
+        this.nama = nama;
+        this.harga = harga;
+        this.stok = stok;
+        this.kategori = kategori;
+        this.imgURL = imgURL;
+    }
+
+    public Barang(int idBarang, String nama, double harga, int stok, String kategori, String imgURL) {
+        this.idBarang = idBarang;
         this.nama = nama;
         this.harga = harga;
         this.stok = stok;

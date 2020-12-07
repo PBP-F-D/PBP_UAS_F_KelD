@@ -10,12 +10,16 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ApiInterface {
 
 //    TODO: No Route (add 'Auth::user()->all()' in api) |admin
 //    @GET("user")
 //    Call<UserResponse> getAllUser();
+
+    @GET("detailuser")
+    Call<UserResponse> getUser(@Header("Authorization") String authToken);
 
     @FormUrlEncoded
     @POST("login")
@@ -36,7 +40,7 @@ public interface ApiInterface {
     Call<UserResponse> getToken(@Header("Authorization") String authToken);
 
     @GET("logout")
-    Call<UserResponse> logout();
+    Call<UserResponse> logout(@Header("Authorization") String authToken);
 
 //    TODO: No Route (no update route in api)
 //    @POST("user/update/{id}")

@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.show();
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<UserResponse> logout = apiService.logout();
+        Call<UserResponse> logout = apiService.logout("Bearer " + token);
         System.out.println("Masuk call response");
 
         logout.enqueue(new Callback<UserResponse>() {

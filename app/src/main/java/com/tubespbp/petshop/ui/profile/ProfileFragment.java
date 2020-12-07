@@ -1,6 +1,7 @@
 package com.tubespbp.petshop.ui.profile;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -25,6 +26,9 @@ import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.textview.MaterialTextView;
+import com.tubespbp.petshop.API.ApiClient;
+import com.tubespbp.petshop.API.ApiInterface;
+import com.tubespbp.petshop.API.User.UserResponse;
 import com.tubespbp.petshop.Constant;
 import com.tubespbp.petshop.MainActivity;
 import com.tubespbp.petshop.R;
@@ -36,6 +40,9 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ProfileFragment extends Fragment {
 
@@ -43,11 +50,12 @@ public class ProfileFragment extends Fragment {
     private MaterialTextView email, name, username, phone, city, country;
     private CircleImageView image;
     private List<User> userList;
-    private String sIdUser, sName, sEmail, sCountry, sCity, sPhone, sGambar;
+    private String sIdUser, sName, sEmail, sCountry, sCity, sPhone, sImage;
     Bitmap[] array;
 
     SharedPreferences shared;
     int idUser;
+    String token;
 
     Constant constant;
     SharedPreferences.Editor editor;
@@ -85,34 +93,32 @@ public class ProfileFragment extends Fragment {
         //Get sharepreferences for ID user
         shared = getActivity().getSharedPreferences("getId", Context.MODE_PRIVATE);
         idUser = shared.getInt("idUser", -1);
+        token = shared.getString("token", null);
         Log.d("ID USER Profile", String.valueOf(idUser));
 
-//        name = root.findViewById(R.id.tv_nama);
-//        email = root.findViewById(R.id.et_email);
-//        phone = root.findViewById(R.id.et_phone);
-//        country = root.findViewById(R.id.et_country);
-//        city = root.findViewById(R.id.et_city);
+        name = root.findViewById(R.id.tv_nama);
+        email = root.findViewById(R.id.et_email);
+        phone = root.findViewById(R.id.et_phone);
+        country = root.findViewById(R.id.et_country);
+        city = root.findViewById(R.id.et_city);
         image = root.findViewById(R.id.profile_image_profile);
 
-//        sIdUser = getArguments().getString("id", "");
-//        sName = getArguments().getString("name", "");
-//        sEmail = getArguments().getString("email", "");
-//        sCountry = getArguments().getString("country", "");
-//        sCity = getArguments().getString("city", "");
-//        sPhone = getArguments().getString("phone", "");
-//        sGambar = getArguments().getString("image", "");
-//
-//        name.setText(sName);
-//        email.setText(sEmail);
-//        country.setText(sCountry);
-//        city.setText(sCity);
-//        phone.setText(sPhone);
-//
-//        Glide.with(getContext())
-//                .load(Uri.parse(sGambar))
-//                .into(image);
+        Intent i = getActivity().getIntent();
+        sIdUser = i.getStringExtra("id");
+        sName = i.getStringExtra("name");
+        sEmail = i.getStringExtra("email");
+        sCountry = i.getStringExtra("country");
+        sCity = i.getStringExtra("city");
+        sPhone = i.getStringExtra("phone");
+        sImage = i.getStringExtra("image");
 
-        getUsers();
+        name.setText(sName);
+        email.setText(sEmail);
+        country.setText(sCountry);
+        city.setText(sCity);
+        phone.setText(sPhone);
+
+        loadUser();
 
         Button btnEdit = root.findViewById(R.id.btn_editProfile);
         btnEdit.setOnClickListener(new View.OnClickListener() {
@@ -125,36 +131,36 @@ public class ProfileFragment extends Fragment {
         return root;
     }
 
-    private void getUsers(){
-        class GetUsers extends AsyncTask<Void, Void, List<User>>{
+    private void loadUser()
+    {
 
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        Call<UserResponse> load = apiService.getUser("Bearer " + token);
+        load.enqueue(new Callback<UserResponse>()
+        {
             @Override
-            protected List<User> doInBackground(Void... voids) {
-                userList = DatabaseClientUser
-                        .getInstance(getActivity().getApplicationContext())
-                        .getDatabaseUser()
-                        .signUpDAO()
-                        .getUser(idUser);
-                return userList;
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                sName = response.body().getUsers().getName();
+                sEmail = response.body().getUsers().getEmail();
+                sPhone = response.body().getUsers().getPhone();
+                sCity = response.body().getUsers().getCity();
+                sCountry = response.body().getUsers().getCountry();
+                sImage = response.body().getUsers().getPhoto();
+                name.setText(sName);
+                email.setText(sEmail);
+                phone.setText(sPhone);
+                city.setText(sCity);
+                country.setText(sCountry);
+
+                Glide.with(getContext())
+                        .load(Uri.parse(sImage))
+                        .into(image);
             }
 
             @Override
-            protected void onPostExecute(List<User> users) {
-                super.onPostExecute(users);
-                if (users.isEmpty()){
-                    Toast.makeText(getActivity(), "No logged-in user", Toast.LENGTH_SHORT).show();
-                } else {
-
-                    Glide.with(getContext())
-                            .load(Uri.parse(userList.get(0).getImage()))
-                            .into(image);
-
-                    profileBinding.setUser(userList.get(0));
-
-                }
+            public void onFailure(Call<UserResponse> call, Throwable t) {
+                Toast.makeText(getContext(), "Kesalahan Jaringan", Toast.LENGTH_SHORT).show();
             }
-        }
-        GetUsers get = new GetUsers();
-        get.execute();
+        });
     }
 }
