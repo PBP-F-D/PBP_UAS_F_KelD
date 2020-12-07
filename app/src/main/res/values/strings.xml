@@ -60,4 +60,9 @@
 
     <string name="logout">Logout</string>
     <string name="theme_picker">Theme Picker</string>
+
+    <string name="title_catalog">Catalog</string>
+    <string name="title_users">Users</string>
+    <string name="title_history">History</string>
+    <string name="users">Users</string>
 </resources>
