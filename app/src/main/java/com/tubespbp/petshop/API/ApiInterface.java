@@ -9,6 +9,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -42,15 +43,16 @@ public interface ApiInterface {
     @GET("logout")
     Call<UserResponse> logout(@Header("Authorization") String authToken);
 
-//    TODO: No Route (no update route in api)
-//    @POST("user/update/{id}")
-//    @FormUrlEncoded
-//    Call<UserResponse> updateUser(@Path("id")String id,
-//                                  @Field("nama") String nama,
-//                                  @Field("prodi") String prodi,
-//                                  @Field("fakultas") String fakultas,
-//                                  @Field("jenis_kelamin") String jenis_kelamin,
-//                                  @Field("password") String password);
+    @POST("editUser/{id}")
+    @FormUrlEncoded
+    Call<UserResponse> updateUser(@Path("id") String id,
+                                  @Field("name") String name,
+                                  @Field("email") String email,
+                                  @Field("country") String country,
+                                  @Field("city") String city,
+                                  @Field("phone") String phone, //TODO: Replace with img_user in AuthController
+                                  @Field("picture") String photo,
+                                  @Header("Authorization") String authToken);
 //    @POST("user/delete/{id}")
 //    Call<UserResponse> deleteUser(@Path("id")String id);
 }

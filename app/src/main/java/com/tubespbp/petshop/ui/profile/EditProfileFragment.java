@@ -1,6 +1,7 @@
 package com.tubespbp.petshop.ui.profile;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -32,14 +34,26 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
+import com.google.gson.GsonBuilder;
+import com.tubespbp.petshop.API.ApiClient;
+import com.tubespbp.petshop.API.ApiInterface;
+import com.tubespbp.petshop.API.User.UserResponse;
+import com.tubespbp.petshop.LoginActivity;
 import com.tubespbp.petshop.R;
 import com.tubespbp.petshop.databinding.FragmentEditProfileBinding;
 import com.tubespbp.petshop.ui.profile.database.DatabaseClientUser;
 import com.tubespbp.petshop.ui.profile.model.User;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -50,9 +64,11 @@ public class EditProfileFragment extends Fragment {
     private String nameEdit, phoneEdit, cityEdit, countryEdit;
     private CircleImageView image;
     FragmentEditProfileBinding editProfileBinding;
+    private String sIdUser, sName, sEmail, sCountry, sCity, sPhone, sImage;
 
     SharedPreferences shared;
     int idUser;
+    String token;
     List<User> userList;
 
     MaterialButton btnEdit, btnCancel;
@@ -61,6 +77,8 @@ public class EditProfileFragment extends Fragment {
     private static final int PERMISSION_CODE = 1000;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     Uri imgUri;
+
+    private ProgressDialog progressDialog;
 
     public EditProfileFragment() {
         // Required empty public constructor
@@ -81,7 +99,19 @@ public class EditProfileFragment extends Fragment {
         //Get sharepreferences for ID user
         shared = getActivity().getSharedPreferences("getId", Context.MODE_PRIVATE);
         idUser = shared.getInt("idUser", -1);
+        token = shared.getString("token", null);
         Log.d("ID USER Edit Profile", String.valueOf(idUser));
+
+        progressDialog = new ProgressDialog(getContext());
+
+        Intent i = getActivity().getIntent();
+        sIdUser = i.getStringExtra("id");
+        sName = i.getStringExtra("name");
+        sEmail = i.getStringExtra("email");
+        sCountry = i.getStringExtra("country");
+        sCity = i.getStringExtra("city");
+        sPhone = i.getStringExtra("phone");
+        sImage = i.getStringExtra("image");
 
         image = root.findViewById(R.id.profile_image_edit);
 
@@ -94,7 +124,7 @@ public class EditProfileFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         //Get ID
-        btnEdit = view.findViewById(R.id.btn_editSubmit);
+        btnEdit = view.findViewById(R.id.btn_editSubmitProfile);
 
         name = view.findViewById(R.id.ti_name);
         phone = view.findViewById(R.id.ti_phone_number);
@@ -188,34 +218,64 @@ public class EditProfileFragment extends Fragment {
     }
 
     private void getUsers(){
-        class GetUsers extends AsyncTask<Void, Void, List<User>>{
 
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        Call<UserResponse> load = apiService.getUser("Bearer " + token);
+        load.enqueue(new Callback<UserResponse>()
+        {
             @Override
-            protected List<User> doInBackground(Void... voids) {
-                userList = DatabaseClientUser
-                        .getInstance(getActivity().getApplicationContext())
-                        .getDatabaseUser()
-                        .signUpDAO()
-                        .getUser(idUser);
-                return userList;
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                sName = response.body().getUsers().getName();
+                sEmail = response.body().getUsers().getEmail();
+                sPhone = response.body().getUsers().getPhone();
+                sCity = response.body().getUsers().getCity();
+                sCountry = response.body().getUsers().getCountry();
+                sImage = response.body().getUsers().getPhoto();
+                name.setText(sName);
+//                email.setText(sEmail);
+                phone.setText(sPhone);
+                city.setText(sCity);
+                country.setText(sCountry);
+
+//                Glide.with(getContext())
+//                        .load(Uri.parse(sImage))
+//                        .into(image);
             }
 
             @Override
-            protected void onPostExecute(List<User> users) {
-                super.onPostExecute(users);
-                if (users.isEmpty()){
-                    Toast.makeText(getActivity(), "No logged-in user", Toast.LENGTH_SHORT).show();
-                } else {
-                    Glide.with(getContext())
-                            .load(Uri.parse(userList.get(0).getImage()))
-                            .into(image);
-                    editProfileBinding.setUserEdit(userList.get(0));
-                    imgUri = Uri.parse(userList.get(0).getImage());
-                }
+            public void onFailure(Call<UserResponse> call, Throwable t) {
+                Toast.makeText(getContext(), "Kesalahan Jaringan", Toast.LENGTH_SHORT).show();
             }
-        }
-        GetUsers get = new GetUsers();
-        get.execute();
+        });
+
+//        class GetUsers extends AsyncTask<Void, Void, List<User>>{
+//
+//            @Override
+//            protected List<User> doInBackground(Void... voids) {
+//                userList = DatabaseClientUser
+//                        .getInstance(getActivity().getApplicationContext())
+//                        .getDatabaseUser()
+//                        .signUpDAO()
+//                        .getUser(idUser);
+//                return userList;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(List<User> users) {
+//                super.onPostExecute(users);
+//                if (users.isEmpty()){
+//                    Toast.makeText(getActivity(), "No logged-in user", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Glide.with(getContext())
+//                            .load(Uri.parse(userList.get(0).getImage()))
+//                            .into(image);
+//                    editProfileBinding.setUserEdit(userList.get(0));
+//                    imgUri = Uri.parse(userList.get(0).getImage());
+//                }
+//            }
+//        }
+//        GetUsers get = new GetUsers();
+//        get.execute();
     }
 
     private void update(View view) {
@@ -241,28 +301,45 @@ public class EditProfileFragment extends Fragment {
         if (!nameEdit.isEmpty() && !phoneEdit.isEmpty()
                 && !cityEdit.isEmpty() && !countryEdit.isEmpty()) {
 
-            class UpdateUser extends AsyncTask<Void, Void, Void> {
+            progressDialog.setMessage("Updating....");
+            progressDialog.setProgressStyle(android.app.ProgressDialog.STYLE_SPINNER);
+            progressDialog.show();
 
+            ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+            Call<UserResponse> req = apiService.updateUser(String.valueOf(idUser), nameEdit,
+                    sEmail, countryEdit, cityEdit, phoneEdit, "", //TODO: Change to imgUri after photo is replaced with img_user
+                    //String.valueOf(imgUri),
+                    "Bearer " + token);
+
+            req.enqueue(new Callback<UserResponse>() {
                 @Override
-                protected Void doInBackground(Void... voids) {
-
-                    DatabaseClientUser.getInstance(getActivity().getApplicationContext()).getDatabaseUser()
-                            .signUpDAO()
-                            .updateUser(nameEdit, phoneEdit, cityEdit, countryEdit, imgUri.toString(), idUser);
-                    return null;
+                public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                    //If response's code is 200
+                    if (response.isSuccessful()) {
+                        Toast.makeText(getContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
+                        Navigation.findNavController(view).navigate(
+                                R.id.action_editProfileFragment_to_navigation_notifications); //move to profile fragment
+                    } else { //If response's code is 4xx (error)
+                        try {
+                            JSONObject error = new JSONObject(response.errorBody().string());
+                            Toast.makeText(getContext(), error.optString("message"), Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        progressDialog.dismiss();
+                    }
                 }
 
                 @Override
-                protected void onPostExecute(Void aVoid) {
-                    super.onPostExecute(aVoid);
-                    Toast.makeText(getActivity().getApplicationContext(), "User updated", Toast.LENGTH_SHORT).show();
-                    Navigation.findNavController(view).navigate(
-                            R.id.action_editProfileFragment_to_navigation_notifications); //move to profile fragment
+                public void onFailure(Call<UserResponse> call, Throwable t) {
+                    Toast.makeText(getContext(), "Update data failed", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                    Log.i("UPDATE", "Msg: " + t.getMessage());
                 }
-            }
-
-            UpdateUser update = new UpdateUser();
-            update.execute();
+            });
         }
     }
 
