@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,11 @@ import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
@@ -28,14 +31,18 @@ import com.tubespbp.petshop.admin.API.CatalogAPI;
 import com.tubespbp.petshop.admin.ui.catalog.model.Barang;
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.android.volley.Request.Method.DELETE;
+import static com.android.volley.Request.Method.GET;
 
 public class CatalogAdapter extends RecyclerView.Adapter<CatalogAdapter.KatalogViewHolder> {
     Context context;
@@ -45,6 +52,7 @@ public class CatalogAdapter extends RecyclerView.Adapter<CatalogAdapter.KatalogV
     String token;
     private View view;
     private deleteItemListener mListener;
+
 
     public CatalogAdapter(List<Barang> result) {
         this.result = result;
@@ -71,6 +79,7 @@ public class CatalogAdapter extends RecyclerView.Adapter<CatalogAdapter.KatalogV
         shared = context.getSharedPreferences("getId", Context.MODE_PRIVATE);
         idUser = shared.getInt("idUser", -1);
         token = shared.getString("token", null);
+
         return new KatalogViewHolder(view);
 
 //        KatalogBarangBinding binding = KatalogBarangBinding.inflate(layoutInflater, viewGroup, false);
@@ -80,6 +89,8 @@ public class CatalogAdapter extends RecyclerView.Adapter<CatalogAdapter.KatalogV
     public void onBindViewHolder(@NonNull final KatalogViewHolder holder, int position) {
         final Barang brg = result.get(position);
         NumberFormat formatter = new DecimalFormat("#,###");
+        System.out.println("ID " + brg.getIdBarang());
+        System.out.println("Nama Barang " + brg.getNama());
         holder.txtNama.setText(brg.getNama());
         holder.txtHarga.setText(String.valueOf(brg.getHarga()));
         holder.txtStok.setText(String.valueOf(brg.getStok()));
@@ -117,8 +128,11 @@ public class CatalogAdapter extends RecyclerView.Adapter<CatalogAdapter.KatalogV
         holder.ivEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Save id Barang
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("barang", brg);
                 Navigation.findNavController(view).navigate(
-                        R.id.action_navigation_catalog_to_editCatalogFragment);
+                        R.id.action_navigation_catalog_to_editCatalogFragment, bundle);
             }
         });
     }
@@ -142,9 +156,7 @@ public class CatalogAdapter extends RecyclerView.Adapter<CatalogAdapter.KatalogV
             ivEdit     = itemView.findViewById(R.id.btnEditCatalog);
             ivDelete     = itemView.findViewById(R.id.btnDeleteCatalog);
         }
-//        private TextInputEditText tiNama, tiStok, tiHarga, tiUrl, tiKategori;
-//        private TextInputLayout tilNama, tilStok, tilHarga, tilUrl, tilKategori;
-//        private MaterialButton btnCancel, btnSubmit;
+
     }
 
     //Fungsi menghapus data mahasiswa
@@ -183,9 +195,18 @@ public class CatalogAdapter extends RecyclerView.Adapter<CatalogAdapter.KatalogV
                 progressDialog.dismiss();
                 Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
 
         //Disini proses penambahan request yang sudah kita buat ke reuest queue yang sudah dideklarasi
         queue.add(stringRequest);
     }
+
 }

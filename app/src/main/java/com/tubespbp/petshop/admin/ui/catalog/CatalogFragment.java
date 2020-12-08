@@ -133,6 +133,7 @@ public class CatalogFragment extends Fragment {
                         //Mengubah data jsonArray tertentu menjadi json Object
                         JSONObject jsonObject = (JSONObject) jsonArray.get(i);
 
+                        Integer id                = jsonObject.optInt("id");
                         String nama              = jsonObject.optString("nama_barang");
                         double harga             = jsonObject.optDouble("harga_barang");
                         Integer stok            = jsonObject.optInt("stok_barang");
@@ -140,7 +141,7 @@ public class CatalogFragment extends Fragment {
                         String gambar           = jsonObject.optString("img_barang");
 
                         //Membuat objek user
-                        Barang barang = new Barang(nama, harga, stok, kategori, gambar);
+                        Barang barang = new Barang(id, nama, harga, stok, kategori, gambar);
 
                         //Menambahkan objek user tadi ke list user
                         listBarang.add(barang);

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.catalog.CatalogFragment"
+    tools:context="admin.ui.catalog.CatalogFragment"
     android:background="?android:attr/colorBackground">
     <!-- Custom Toolbar -->
     <androidx.appcompat.widget.Toolbar
@@ -21,7 +21,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/app_name"
+            android:text="@string/app_name_admin"
             android:textColor="?attr/colorAccent"
             android:textSize="23sp"
             android:theme="@style/MainToolbarTheme" />
