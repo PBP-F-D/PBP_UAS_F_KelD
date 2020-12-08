@@ -74,4 +74,10 @@
 
     <string name="toolbar_edit_catalog">| Edit Catalog</string>
     <string name="toolbar_add_catalog">| Add Catalog</string>
+
+    <string-array name="categories">
+        <item>Dog</item>
+        <item>Cat</item>
+        <item>Others</item>
+    </string-array>
 </resources>

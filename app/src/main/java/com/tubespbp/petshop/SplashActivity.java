@@ -10,6 +10,8 @@ import android.app.Activity;
 import android.os.Handler;
 import android.util.Log;
 
+import com.tubespbp.petshop.admin.AdminActivity;
+
 public class SplashActivity extends Activity {
 
     Handler handler;
@@ -31,6 +33,12 @@ public class SplashActivity extends Activity {
                     Intent intent= new Intent(SplashActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();
+                } else if(idUser == 21) {
+                    Log.d("ID USER Splash else if ADMIN", String.valueOf(idUser));
+                    Intent intent= new Intent(SplashActivity.this, AdminActivity.class);
+                    startActivity(intent);
+                    finish();
+
                 } else { ////if there's logged-in user (idUser != -1), then go to main
                     Log.d("ID USER Splash else", String.valueOf(idUser));
                     Intent intent= new Intent(SplashActivity.this, MainActivity.class);

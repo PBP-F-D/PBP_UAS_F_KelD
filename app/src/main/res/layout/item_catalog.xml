@@ -39,9 +39,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:fontFamily="@font/raleway_medium"
             android:text="@string/rp"
             android:textColor="@android:color/white"
-            android:fontFamily="@font/raleway_medium"
             app:layout_constraintStart_toEndOf="@+id/fotoBarang"
             app:layout_constraintTop_toBottomOf="@+id/namaBarang"
             tools:text="Rp." />
@@ -51,17 +51,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
-            tools:text="Harga barang"
             android:fontFamily="@font/raleway_medium"
             android:textColor="@android:color/white"
             app:layout_constraintStart_toEndOf="@+id/hargaRp"
-            app:layout_constraintTop_toBottomOf="@+id/namaBarang" />
+            app:layout_constraintTop_toBottomOf="@+id/namaBarang"
+            tools:text="Harga barang" />
 
         <TextView
             android:id="@+id/stok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:fontFamily="@font/raleway_medium"
             android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
@@ -74,12 +73,12 @@
             android:id="@+id/pcs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="4dp"
             android:fontFamily="@font/raleway_medium"
             android:text="pcs"
             android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.057"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/stok"
             app:layout_constraintTop_toBottomOf="@+id/hargaRp" />
 
@@ -87,13 +86,15 @@
             android:id="@+id/category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
             android:fontFamily="@font/raleway_medium"
             android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.037"
             app:layout_constraintStart_toEndOf="@+id/fotoBarang"
             app:layout_constraintTop_toBottomOf="@+id/stok"
+            app:layout_constraintVertical_bias="0.1"
             tools:text="Category" />
 
         <ImageView
@@ -114,14 +115,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="206dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:src="@drawable/ic_baseline_delete_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/fotoBarang"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.848" />
+            app:layout_constraintTop_toBottomOf="@+id/btnEditCatalog"
+            app:layout_constraintVertical_bias="0.897" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

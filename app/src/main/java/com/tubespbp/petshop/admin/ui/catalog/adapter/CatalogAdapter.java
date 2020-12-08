@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.RequestQueue;
@@ -110,6 +111,14 @@ public class CatalogAdapter extends RecyclerView.Adapter<CatalogAdapter.KatalogV
                 });
                 AlertDialog alert = builder.create();
                 alert.show();
+            }
+        });
+
+        holder.ivEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(
+                        R.id.action_navigation_catalog_to_editCatalogFragment);
             }
         });
     }

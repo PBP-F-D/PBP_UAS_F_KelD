@@ -9,7 +9,14 @@
         android:id="@+id/navigation_catalog"
         android:name="com.tubespbp.petshop.admin.ui.catalog.CatalogFragment"
         android:label="@string/title_catalog"
-        tools:layout="@layout/fragment_catalog_admin" />
+        tools:layout="@layout/fragment_catalog_admin" >
+        <action
+            android:id="@+id/action_navigation_catalog_to_editCatalogFragment"
+            app:destination="@id/editCatalogFragment" />
+        <action
+            android:id="@+id/action_navigation_catalog_to_addCatalogFragment"
+            app:destination="@id/addCatalogFragment" />
+    </fragment>
 
 
     <fragment
@@ -24,4 +31,20 @@
         android:name="com.tubespbp.petshop.admin.ui.notifications.NotificationsFragment"
         android:label="Notifications"
         tools:layout="@layout/fragment_notifications" />
+    <fragment
+        android:id="@+id/editCatalogFragment"
+        android:name="com.tubespbp.petshop.admin.ui.catalog.EditCatalogFragment"
+        android:label="EditCatalogFragment" >
+        <action
+            android:id="@+id/action_editCatalogFragment_to_navigation_catalog"
+            app:destination="@id/navigation_catalog" />
+    </fragment>
+    <fragment
+        android:id="@+id/addCatalogFragment"
+        android:name="com.tubespbp.petshop.admin.ui.catalog.AddCatalogFragment"
+        android:label="AddCatalogFragment" >
+        <action
+            android:id="@+id/action_addCatalogFragment_to_navigation_catalog"
+            app:destination="@id/navigation_catalog" />
+    </fragment>
 </navigation>

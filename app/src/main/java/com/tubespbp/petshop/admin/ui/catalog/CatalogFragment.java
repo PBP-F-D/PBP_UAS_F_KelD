@@ -1,23 +1,30 @@
 package com.tubespbp.petshop.admin.ui.catalog;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.tubespbp.petshop.R;
 import com.tubespbp.petshop.admin.API.CatalogAPI;
 import com.tubespbp.petshop.admin.ui.catalog.adapter.CatalogAdapter;
@@ -29,7 +36,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.android.volley.Request.Method.GET;
 
@@ -38,6 +47,9 @@ public class CatalogFragment extends Fragment {
     private CatalogAdapter adapter;
     private List<Barang> listBarang;
     private View view;
+    private String token;
+    SharedPreferences shared;
+    FloatingActionButton fab;
 
     private CatalogViewModel catalogViewModel;
 
@@ -45,11 +57,27 @@ public class CatalogFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_catalog_admin, container, false);
+        shared = getActivity().getSharedPreferences("getId", Context.MODE_PRIVATE);
+        token = shared.getString("token", null);
 
         setAdapter();
         getProducts();
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        fab = view.findViewById(R.id.fab_catalog_admin);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(
+                        R.id.action_navigation_catalog_to_addCatalogFragment);
+            }
+        });
     }
 
     public void setAdapter(){
@@ -84,7 +112,7 @@ public class CatalogFragment extends Fragment {
         final ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(view.getContext());
         progressDialog.setMessage("loading....");
-        progressDialog.setTitle("Menampilkan data mahasiswa");
+        progressDialog.setTitle("Loading catalog");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.show();
 
@@ -132,7 +160,16 @@ public class CatalogFragment extends Fragment {
                 Toast.makeText(view.getContext(), error.getMessage(),
                         Toast.LENGTH_SHORT).show();
             }
-        });
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String,String> headers = new HashMap<>();
+
+                headers.put("Content-Type","application/x-www-form-urlencoded");
+                headers.put("Authorization","Bearer " + token);
+                return headers;
+            }
+        };
         //Disini proses penambahan request yang sudah kita buat ke reuest queue yang sudah dideklarasi
         queue.add(stringRequest);
     }

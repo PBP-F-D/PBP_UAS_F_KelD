@@ -107,7 +107,7 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
 //        holder.txtStok.setText(String.valueOf(brg.getStok()));
 
         Glide.with(context)
-                .load(CatalogAPI.URL_IMAGE + brg.getImgURL())
+                .load(brg.getImgURL())
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
                 .into(holder.ivFoto);
