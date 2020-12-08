@@ -36,7 +36,6 @@ import com.tubespbp.petshop.R;
 import com.tubespbp.petshop.databinding.FragmentEditProfileBinding;
 import com.tubespbp.petshop.ui.profile.database.DatabaseClientUser;
 import com.tubespbp.petshop.ui.profile.model.User;
-import com.tubespbp.petshop.ui.shoppingCart.database.DatabaseClient;
 
 import java.util.List;
 

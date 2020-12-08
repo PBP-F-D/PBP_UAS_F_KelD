@@ -185,8 +185,8 @@ public class CatalogFragment extends Fragment {
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
-                Toast.makeText(view.getContext(), response.optString("message"),
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(view.getContext(), response.optString("message"),
+//                        Toast.LENGTH_SHORT).show();
             }
         }, new Response.ErrorListener() {
             @Override

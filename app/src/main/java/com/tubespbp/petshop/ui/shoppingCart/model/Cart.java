@@ -14,37 +14,22 @@ import java.io.Serializable;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-@Entity
 public class Cart implements Serializable {
-    @PrimaryKey(autoGenerate = true)
     public int id;
-
-    @ColumnInfo(name = "idUser")
-    public int idUser;
-
-    @ColumnInfo(name = "namaBarang")
+    public String idUser;
     public String namaB;
-
-    @ColumnInfo(name = "hargaBarang")
     public double hargaB;
-
-    @ColumnInfo(name = "jumlah")
     public int jumlahB;
-
-    @ColumnInfo(name = "totalHarga")
     public double totalB;
-
-    @ColumnInfo(name = "statusBarang")
     public String statusB;
-
-    @ColumnInfo(name = "imgUrlCart")
     public String imgUrlC;
 
     public Cart() {
         //
     }
 
-    public Cart(int idUser, String namaB, Double hargaB, int jumlahB, String statusB, String imgUrlC) {
+    public Cart(int id, String idUser, String namaB, Double hargaB, int jumlahB, String statusB, String imgUrlC) {
+        this.id = id;
         this.idUser = idUser;
         this.namaB = namaB;
         this.hargaB = hargaB;
@@ -61,11 +46,11 @@ public class Cart implements Serializable {
         this.id = id;
     }
 
-    public int getIdUser() {
+    public String getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(int idUser) { this.idUser = idUser; }
+    public void setIdUser(String idUser) { this.idUser = idUser; }
 
     public String getNamaB() {
         return namaB;

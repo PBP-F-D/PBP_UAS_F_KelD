@@ -34,7 +34,6 @@ import com.tubespbp.petshop.API.CatalogAPI;
 import com.tubespbp.petshop.R;
 import com.tubespbp.petshop.databinding.KatalogBarangBinding;
 import com.tubespbp.petshop.ui.home.catalog.model.Barang;
-import com.tubespbp.petshop.ui.shoppingCart.database.DatabaseClient;
 import com.tubespbp.petshop.ui.shoppingCart.model.Cart;
 
 import org.json.JSONException;
@@ -95,11 +94,11 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
         holder.txtHarga.setText(String.valueOf(brg.getHarga()));
 //        holder.txtStok.setText(String.valueOf(brg.getStok()));
 
-//        Glide.with(context)
-//                .load(CatalogAPI.URL_IMAGE + brg.getImgURL())
-//                .diskCacheStrategy(DiskCacheStrategy.NONE)
-//                .skipMemoryCache(true)
-//                .into(holder.ivGambar);
+        Glide.with(context)
+                .load(CatalogAPI.URL_IMAGE + brg.getImgURL())
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(holder.ivFoto);
 
         holder.btnTambah.setOnClickListener(new View.OnClickListener() {
             @Override

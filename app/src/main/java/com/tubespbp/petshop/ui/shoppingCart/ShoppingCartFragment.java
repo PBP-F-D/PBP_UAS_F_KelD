@@ -33,7 +33,6 @@ import com.tubespbp.petshop.MainActivity;
 import com.tubespbp.petshop.R;
 import com.tubespbp.petshop.databinding.FragmentShoppingCartBinding;
 import com.tubespbp.petshop.ui.shoppingCart.adapter.RecyclerViewAdapterCart;
-import com.tubespbp.petshop.ui.shoppingCart.database.DatabaseClient;
 import com.tubespbp.petshop.ui.shoppingCart.model.Cart;
 
 import org.json.JSONArray;
@@ -102,11 +101,7 @@ public class ShoppingCartFragment extends Fragment {
         idUser = shared.getInt("idUser", -1);
         token = shared.getString("token", null);
 
-        //Recycler View
-        recyclerView = shoppingCartBinding.rvFollow;
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setHasFixedSize(true);
+        ListCart = new ArrayList<Cart>();
 
         getCart();
 
@@ -134,6 +129,20 @@ public class ShoppingCartFragment extends Fragment {
                             Toast.LENGTH_SHORT).show();
             }
         });
+
+        //Recycler View
+        recyclerView = shoppingCartBinding.rvFollow;
+
+        adapter = new RecyclerViewAdapterCart(getContext(), ListCart, new RecyclerViewAdapterCart.deleteItemListener() {
+            @Override
+            public void deleteItem(Boolean delete) {
+                getCart();
+            }
+        });
+        recyclerView.setAdapter(adapter);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setHasFixedSize(true);
 
         return view;
     }
@@ -196,17 +205,19 @@ public class ShoppingCartFragment extends Fragment {
                         //Mengubah data jsonArray tertentu menjadi json Object
                         JSONObject jsonObject = (JSONObject) jsonArray.get(i);
 
-                        int userbarang      = jsonObject.optInt("user_barang");
+                        String idCart       = jsonObject.optString("id");
+                        String userbarang   = jsonObject.optString("user_barang");
                         String namaBarang   = jsonObject.optString("nama_barang");
                         Double hargaBarang  = jsonObject.optDouble("harga_barang");
                         Integer jumlah      = jsonObject.optInt("jmlbeli_barang");
                         String statusBarang = jsonObject.optString("status_barang");
                         String gambar       = jsonObject.optString("img_barang");
 
-                        if(idUser == userbarang) {
+                        if(idUser == Integer.parseInt(userbarang) && statusBarang.equals("Not Paid")) {
+                            System.out.println("Cart retrieved");
                             //Membuat objek cart
                             Cart cart =
-                                    new Cart(userbarang, namaBarang, hargaBarang, jumlah, statusBarang, gambar);
+                                    new Cart(Integer.parseInt(idCart), userbarang, namaBarang, hargaBarang, jumlah, statusBarang, gambar);
 
                             //Menambahkan objek user tadi ke list cart
                             ListCart.add(cart);

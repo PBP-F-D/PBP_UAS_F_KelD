@@ -27,7 +27,6 @@ import com.tubespbp.petshop.ui.profile.database.DatabaseClientUser;
 import com.tubespbp.petshop.ui.profile.model.User;
 import com.tubespbp.petshop.ui.shoppingCart.adapter.RecyclerViewAdapterCart;
 import com.tubespbp.petshop.ui.shoppingCart.adapter.RecyclerViewAdapterCheckout;
-import com.tubespbp.petshop.ui.shoppingCart.database.DatabaseClient;
 import com.tubespbp.petshop.ui.shoppingCart.model.Cart;
 
 import java.util.ArrayList;
@@ -173,25 +172,25 @@ public class CheckoutFragment extends Fragment {
     }
 
     private void deleteData(final Cart cart){
-        class DeleteItem extends AsyncTask<Void, Void, Void> {
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                DatabaseClient.getInstance(getContext())
-                        .getDatabase()
-                        .userDAO()
-                        .delete(cart);
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-            }
-        }
-
-        DeleteItem delete = new DeleteItem();
-        delete.execute();
+//        class DeleteItem extends AsyncTask<Void, Void, Void> {
+//
+//            @Override
+//            protected Void doInBackground(Void... voids) {
+//                DatabaseClient.getInstance(getContext())
+//                        .getDatabase()
+//                        .userDAO()
+//                        .delete(cart);
+//                return null;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Void aVoid) {
+//                super.onPostExecute(aVoid);
+//            }
+//        }
+//
+//        DeleteItem delete = new DeleteItem();
+//        delete.execute();
     }
 
 }
