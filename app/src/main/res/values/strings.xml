@@ -65,4 +65,13 @@
     <string name="title_users">Users</string>
     <string name="title_history">History</string>
     <string name="users">Users</string>
+
+<!--    Admin-->
+    <string name="app_name_admin">AdminPawHub</string>
+    <string name="rp">Rp.</string>
+    <string name="toolbar_catalog">| Catalog</string>
+    <string name="toolbar_users">| Users</string>
+
+    <string name="toolbar_edit_catalog">| Edit Catalog</string>
+    <string name="toolbar_add_catalog">| Add Catalog</string>
 </resources>

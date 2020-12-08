@@ -23,6 +23,7 @@
         </activity>
         <activity android:name=".LocationActivity" />
         <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".admin.AdminActivity"></activity>
         <activity android:name=".SignUpActivity">
             <intent-filter>
                 <action android:name="android.media.action.IMAGE_CAPTURE" />

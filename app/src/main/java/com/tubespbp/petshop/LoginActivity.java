@@ -22,6 +22,7 @@ import com.tubespbp.petshop.API.ApiClient;
 import com.tubespbp.petshop.API.ApiInterface;
 import com.tubespbp.petshop.API.User.UserDAO;
 import com.tubespbp.petshop.API.User.UserResponse;
+import com.tubespbp.petshop.admin.AdminActivity;
 import com.tubespbp.petshop.ui.profile.ProfileFragment;
 import com.tubespbp.petshop.ui.profile.model.User;
 
@@ -150,9 +151,9 @@ public class LoginActivity extends AppCompatActivity {
                         editor.apply();
                         System.out.println("Test setelah editor apply");
 
-                        if (user.getEmail().equalsIgnoreCase("admin")) {
+                        if (user.getEmail().equalsIgnoreCase("admin@admin.com")) {
                             System.out.println("admin areaaa");
-                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                            Intent i = new Intent(LoginActivity.this, AdminActivity.class);
                             startActivity(i);
                         } else {
                             System.out.println("non admin areaaa");
