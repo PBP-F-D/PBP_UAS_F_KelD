@@ -5,9 +5,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.util.Base64;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,21 +35,28 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.button.MaterialButton;
 import com.tubespbp.petshop.API.CartAPI;
 import com.tubespbp.petshop.API.CatalogAPI;
+import com.tubespbp.petshop.LoginActivity;
 import com.tubespbp.petshop.R;
 import com.tubespbp.petshop.databinding.KatalogBarangBinding;
 import com.tubespbp.petshop.ui.home.catalog.model.Barang;
 import com.tubespbp.petshop.ui.shoppingCart.model.Cart;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.content.ContentValues.TAG;
 import static com.android.volley.Request.Method.POST;
+import static com.mapbox.mapboxsdk.Mapbox.getApplicationContext;
 
 public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerViewAdapterKatalog.KatalogViewHolder> {
     Context context;
@@ -53,6 +64,7 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
     SharedPreferences shared;
     int idUser;
     String token;
+    private Bitmap bitmap;
     private RecyclerViewAdapterKatalog.deleteItemListener mListener;
 
     public RecyclerViewAdapterKatalog(List<Barang> result) {
@@ -103,6 +115,8 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
         holder.btnTambah.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String namaBarang = holder.txtNama.getText().toString();
+                String hargaBarang = holder.txtHarga.getText().toString();
 
                 //Creates alert dialog every time the add button is clicked asking for user's input
                 android.app.AlertDialog.Builder alert = new android
@@ -125,11 +139,19 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
                         Integer value = Integer.parseInt(String.valueOf(input.getText()));
                         //adds item to cart if input is greater than zero
                         if(value > 0) {
-                            addBarangToCart(holder, value);
-                            if(value == 1)
-                                Toast.makeText(holder.itemView.getContext(),value.toString() + "x " + brg.getNama()+" has been added to cart", Toast.LENGTH_SHORT).show();
-                            else
-                                Toast.makeText(holder.itemView.getContext(),value.toString() + "x " + brg.getNama()+"(s) have been added to cart", Toast.LENGTH_SHORT).show();
+                            String gambar = "";
+                            if (bitmap != null){
+                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                                bitmap.compress(Bitmap.CompressFormat.PNG,100,byteArrayOutputStream);
+                                byte[] bytes = byteArrayOutputStream.toByteArray();
+                                gambar = Base64.encodeToString(bytes, Base64.DEFAULT);
+                            }
+
+                            addBarangToCart(holder, value, gambar, namaBarang, hargaBarang);
+//                            if(value == 1)
+////                                Toast.makeText(holder.itemView.getContext(),value.toString() + "x " + brg.getNama()+" has been added to cart", Toast.LENGTH_SHORT).show();
+////                            else
+////                                Toast.makeText(holder.itemView.getContext(),value.toString() + "x " + brg.getNama()+"(s) have been added to cart", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -165,50 +187,16 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
         }
     }
 
-    private void addBarangToCart(@NonNull final KatalogViewHolder holder, final int value){
-
-//        class addBarangToCart extends AsyncTask<Void, Void, Void> {
-//            String name = holder.katalogBarangBinding.namaBarang.getText().toString();
-//            double harga =  Double.parseDouble(holder.katalogBarangBinding.hargaBarang.getText().toString());
-//            Cart cart;
-//            int jml =  value;
-//            final String gmbr = holder.katalogBarangBinding.getBrg().getImgURL();
-//
-//            double total = Double.parseDouble(holder.katalogBarangBinding.hargaBarang.getText().toString()) * jml;
-//
-//            @Override
-//            protected void onPostExecute(Void aVoid) {
-//                super.onPostExecute(aVoid);
-//            }
-//
-//            @Override
-//            protected Void doInBackground(Void... voids) {
-//                cart = new Cart();
-//                cart.setNamaB(name);
-//                cart.setIdUser(idUser);
-//                cart.setHargaB(harga);
-//                cart.setJumlahB(jml);
-//                cart.setTotalB(total);
-//                cart.setImgUrlC(gmbr);
-//
-//                DatabaseClient.getInstance(holder.itemView.getContext())
-//                        .getDatabase()
-//                        .userDAO()
-//                        .insert(cart);
-//                return null;
-//            }
-//        }
-//
-//        addBarangToCart add = new addBarangToCart();
-//        add.execute();
+    private void addBarangToCart(@NonNull final KatalogViewHolder holder, final int value,
+                                 final String gambar, final String namaBarang, final String hargaBarang){
 
         int jml =  value;
         RequestQueue queue = Volley.newRequestQueue(context);
 
         final ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("loading....");
-        progressDialog.setTitle("Menambahkan Barang ke cart");
+        progressDialog.setMessage("Loading....");
+        progressDialog.setTitle("Adding Item to cart");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.show();
 
@@ -221,17 +209,16 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
                     //Mengubah response string menjadi object
                     JSONObject obj = new JSONObject(response);
                     //obj.getString("message") digunakan untuk mengambil pesan status dari response
-                    if(obj.getString("status").equals("Success"))
-                    {
+                    if (obj.getString("status").equals("Success")) {
                         JSONObject object = new JSONObject(response);
 
                         //obj.getString("message") digunakan untuk mengambil pesan message dari response
                         Toast.makeText(context, object.getString("message"), Toast.LENGTH_SHORT).show();
                         notifyDataSetChanged();
+                    } else {
+                        //obj.getString("message") digunakan untuk mengambil pesan message dari response
+                        Toast.makeText(context, obj.getString("message"), Toast.LENGTH_SHORT).show();
                     }
-
-                    //obj.getString("message") digunakan untuk mengambil pesan message dari response
-                    Toast.makeText(context, obj.getString("message"), Toast.LENGTH_SHORT).show();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -239,24 +226,27 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                //Disini bagian jika response jaringan terdapat ganguan/error
+                try {
+                    byte[] htmlBodyBytes = error.networkResponse.data;
+                    Toast.makeText(context, new String(htmlBodyBytes), Toast.LENGTH_SHORT).show();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
                 progressDialog.dismiss();
-                Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }){
             @Override
-            protected Map<String, String> getParams()
-            {
+            protected Map<String, String> getParams() {
                 /*
                     Disini adalah proses memasukan/mengirimkan parameter key dengan data value,
                     dan nama key nya harus sesuai dengan parameter key yang diminta oleh jaringan
                     API.
                 */
                 Map<String, String>  params = new HashMap<String, String>();
-                params.put("nama_barang", holder.txtNama.toString());
+                params.put("nama_barang", namaBarang);
                 params.put("jmlbeli_barang", String.valueOf(jml));
-                params.put("harga_barang", holder.txtHarga.toString());
-                params.put("img_barang", holder.ivFoto.toString());
+                params.put("harga_barang", hargaBarang);
+                params.put("img_barang", gambar);
                 params.put("user_barang", String.valueOf(idUser));
                 params.put("status_barang", "Not Paid");
 
@@ -266,16 +256,15 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
 
-                headers.put("Content-Type", "application/x-www-form-urlencoded");
+                headers.put("Content-Type", "application/form-data");
+//                headers.put("Content-Type","application/x-www-form-urlencoded");
                 headers.put("Authorization", "Bearer " + token);
+                headers.put("abc", "value");
                 return headers;
             }
         };
 
         //Disini proses penambahan request yang sudah kita buat ke reuest queue yang sudah dideklarasi
         queue.add(stringRequest);
-
-
-
     }
 }
