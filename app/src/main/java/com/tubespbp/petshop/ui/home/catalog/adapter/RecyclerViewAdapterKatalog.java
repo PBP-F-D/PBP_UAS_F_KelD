@@ -1,5 +1,6 @@
 package com.tubespbp.petshop.ui.home.catalog.adapter;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -12,18 +13,39 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.tubespbp.petshop.Constant;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.material.button.MaterialButton;
+import com.tubespbp.petshop.API.CartAPI;
+import com.tubespbp.petshop.API.CatalogAPI;
+import com.tubespbp.petshop.R;
 import com.tubespbp.petshop.databinding.KatalogBarangBinding;
 import com.tubespbp.petshop.ui.home.catalog.model.Barang;
 import com.tubespbp.petshop.ui.shoppingCart.database.DatabaseClient;
 import com.tubespbp.petshop.ui.shoppingCart.model.Cart;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.android.volley.Request.Method.POST;
 
 public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerViewAdapterKatalog.KatalogViewHolder> {
     Context context;
@@ -64,7 +86,18 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
     @Override
     public void onBindViewHolder(@NonNull final KatalogViewHolder holder, int position) {
         final Barang brg = result.get(position);
-        holder.bind(brg);
+//        holder.bind(brg);
+
+        NumberFormat formatter = new DecimalFormat("#,###");
+        holder.txtNama.setText(brg.getNama());
+        holder.txtHarga.setText("Rp "+ formatter.format(brg.getHarga()));
+        holder.txtStok.setText(brg.getStok());
+
+//        Glide.with(context)
+//                .load(CatalogAPI.URL_IMAGE+brg.getImgURL())
+//                .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                .skipMemoryCache(true)
+//                .into(holder.ivGambar);
 
         holder.katalogBarangBinding.btnTambah.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,53 +151,129 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
 
     public class KatalogViewHolder extends RecyclerView.ViewHolder{
         private KatalogBarangBinding katalogBarangBinding;
+        private TextView txtNama, txtStok, txtHarga, ivEdit, ivHapus;;
+        private ImageView ivFoto;
+        private MaterialButton btnTambah;
 
 
         public KatalogViewHolder(KatalogBarangBinding itemView){
             super(itemView.getRoot());
-            katalogBarangBinding = itemView;
+//            katalogBarangBinding = itemView;
+            txtNama    = itemView.getRoot().findViewById(R.id.namaBarang);
+            txtStok    = itemView.getRoot().findViewById(R.id.stok);
+            txtHarga   = itemView.getRoot().findViewById(R.id.tv_totalprice);
+            ivFoto     = itemView.getRoot().findViewById(R.id.ivFotoBarang);
+            btnTambah  = itemView.getRoot().findViewById(R.id.btn_tambah);
         }
-        public void bind(Barang barang) {
-            katalogBarangBinding.setBrg(barang);
-            katalogBarangBinding.executePendingBindings();
-        }
+//        public void bind(Barang barang) {
+//            katalogBarangBinding.setBrg(barang);
+//            katalogBarangBinding.executePendingBindings();
+//        }
     }
 
     private void addBarangToCart(@NonNull final KatalogViewHolder holder, final int value){
 
-        class addBarangToCart extends AsyncTask<Void, Void, Void> {
-            String name = holder.katalogBarangBinding.namaBarang.getText().toString();
-            double harga =  Double.parseDouble(holder.katalogBarangBinding.hargaBarang.getText().toString());
-            Cart cart;
-            int jml =  value;
-            final String gmbr = holder.katalogBarangBinding.getBrg().getImgURL();
+//        class addBarangToCart extends AsyncTask<Void, Void, Void> {
+//            String name = holder.katalogBarangBinding.namaBarang.getText().toString();
+//            double harga =  Double.parseDouble(holder.katalogBarangBinding.hargaBarang.getText().toString());
+//            Cart cart;
+//            int jml =  value;
+//            final String gmbr = holder.katalogBarangBinding.getBrg().getImgURL();
+//
+//            double total = Double.parseDouble(holder.katalogBarangBinding.hargaBarang.getText().toString()) * jml;
+//
+//            @Override
+//            protected void onPostExecute(Void aVoid) {
+//                super.onPostExecute(aVoid);
+//            }
+//
+//            @Override
+//            protected Void doInBackground(Void... voids) {
+//                cart = new Cart();
+//                cart.setNamaB(name);
+//                cart.setIdUser(idUser);
+//                cart.setHargaB(harga);
+//                cart.setJumlahB(jml);
+//                cart.setTotalB(total);
+//                cart.setImgUrlC(gmbr);
+//
+//                DatabaseClient.getInstance(holder.itemView.getContext())
+//                        .getDatabase()
+//                        .userDAO()
+//                        .insert(cart);
+//                return null;
+//            }
+//        }
+//
+//        addBarangToCart add = new addBarangToCart();
+//        add.execute();
 
-            double total = Double.parseDouble(holder.katalogBarangBinding.hargaBarang.getText().toString()) * jml;
+        int jml =  value;
+        RequestQueue queue = Volley.newRequestQueue(context);
 
+        final ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("loading....");
+        progressDialog.setTitle("Menambahkan data buku");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
+
+        StringRequest stringRequest = new StringRequest(POST, CartAPI.URL_ADD, new Response.Listener<String>() {
             @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-            }
+            public void onResponse(String response) {
+                //Disini bagian jika response jaringan berhasil tidak terdapat ganguan/error
+                progressDialog.dismiss();
+                try {
+                    //Mengubah response string menjadi object
+                    JSONObject obj = new JSONObject(response);
+                    //obj.getString("message") digunakan untuk mengambil pesan status dari response
+                    if(obj.getString("status").equals("Success"))
+                    {
+                        JSONObject object = new JSONObject(response);
 
+                        //obj.getString("message") digunakan untuk mengambil pesan message dari response
+                        Toast.makeText(context, object.getString("message"), Toast.LENGTH_SHORT).show();
+                        notifyDataSetChanged();
+                    }
+
+                    //obj.getString("message") digunakan untuk mengambil pesan message dari response
+                    Toast.makeText(context, obj.getString("message"), Toast.LENGTH_SHORT).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
             @Override
-            protected Void doInBackground(Void... voids) {
-                cart = new Cart();
-                cart.setNamaB(name);
-                cart.setIdUser(idUser);
-                cart.setHargaB(harga);
-                cart.setJumlahB(jml);
-                cart.setTotalB(total);
-                cart.setImgUrlC(gmbr);
-
-                DatabaseClient.getInstance(holder.itemView.getContext())
-                        .getDatabase()
-                        .userDAO()
-                        .insert(cart);
-                return null;
+            public void onErrorResponse(VolleyError error) {
+                //Disini bagian jika response jaringan terdapat ganguan/error
+                progressDialog.dismiss();
+                Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        }
+        }){
+            @Override
+            protected Map<String, String> getParams()
+            {
+                /*
+                    Disini adalah proses memasukan/mengirimkan parameter key dengan data value,
+                    dan nama key nya harus sesuai dengan parameter key yang diminta oleh jaringan
+                    API.
+                */
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("nama_barang", holder.txtNama.toString());
+                params.put("jmlbeli_barang", String.valueOf(jml));
+                params.put("harga_barang", holder.txtHarga.toString());
+                params.put("img_barang", holder.ivFoto.toString());
+                params.put("user_barang", String.valueOf(idUser));
+                params.put("status_barang", "Not Paid");
 
-        addBarangToCart add = new addBarangToCart();
-        add.execute();
+                return params;
+            }
+        };
+
+        //Disini proses penambahan request yang sudah kita buat ke reuest queue yang sudah dideklarasi
+        queue.add(stringRequest);
+
+
+
     }
 }

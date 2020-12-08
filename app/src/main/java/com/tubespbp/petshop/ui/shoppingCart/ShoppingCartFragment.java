@@ -20,6 +20,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -40,7 +41,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.android.volley.Request.Method.GET;
 
@@ -176,14 +179,8 @@ public class ShoppingCartFragment extends Fragment {
         progressDialog.setProgressStyle(android.app.ProgressDialog.STYLE_SPINNER);
         progressDialog.show();
 
-        JSONObject parameters = new JSONObject();
-        try {
-            parameters.put("Authorization", "Bearer " + token);
-            parameters.put("Content-Type","application/x-www-form-urlencoded");
-        } catch (Exception e) {
-        }
         final JsonObjectRequest stringRequest = new JsonObjectRequest(GET, CartAPI.URL_SELECT
-                , parameters, new Response.Listener<JSONObject>() {
+                , null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 //Disini bagian jika response jaringan berhasil tidak terdapat ganguan/error
@@ -208,7 +205,9 @@ public class ShoppingCartFragment extends Fragment {
 
                         if(idUser == userbarang) {
                             //Membuat objek cart
-                            Cart cart = new Cart(userbarang, namaBarang, hargaBarang, jumlah, statusBarang, gambar);
+                            Cart cart =
+                                    new Cart(userbarang, namaBarang, hargaBarang, jumlah, statusBarang, gambar);
+
                             //Menambahkan objek user tadi ke list cart
                             ListCart.add(cart);
                         }
@@ -228,9 +227,18 @@ public class ShoppingCartFragment extends Fragment {
                 Toast.makeText(view.getContext(), error.getMessage(),
                         Toast.LENGTH_SHORT).show();
             }
-        });
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String,String> headers = new HashMap<>();
 
-        //Disini proses penambahan request yang sudah kita buat ke reuest queue yang sudah dideklarasi
+                headers.put("Content-Type","application/x-www-form-urlencoded");
+                headers.put("Authorization","Bearer " + token);
+                return headers;
+            }
+        };
+
+        //Disini proses penambahan request yang sudah kita buat ke request queue yang sudah dideklarasi
         queue.add(stringRequest);
 
     }

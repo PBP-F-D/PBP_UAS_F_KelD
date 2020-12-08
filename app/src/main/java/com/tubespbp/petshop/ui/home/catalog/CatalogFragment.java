@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -43,7 +44,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.android.volley.Request.Method.GET;
 
@@ -107,11 +110,13 @@ public class CatalogFragment extends Fragment {
 
         //List barang baru yang dikosongkan
         newList = new ArrayList<Barang>();
+        ListBarang = new ArrayList<Barang>();
+
         //Recycler View
         recyclerView = catalogBinding.rvKatalog;
 
         //Menampilkan list barang baru
-        adapter = new RecyclerViewAdapterKatalog(newList);
+        adapter = new RecyclerViewAdapterKatalog(ListBarang);
         recyclerView.setAdapter(adapter);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -150,8 +155,7 @@ public class CatalogFragment extends Fragment {
     }
 
     public void getBarang() {
-        ListBarang = new ArrayList<Barang>();
-        queue = Volley.newRequestQueue(view.getContext());
+        RequestQueue queue = Volley.newRequestQueue(view.getContext());
 
         final ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(view.getContext());
@@ -160,19 +164,15 @@ public class CatalogFragment extends Fragment {
         progressDialog.setProgressStyle(android.app.ProgressDialog.STYLE_SPINNER);
         progressDialog.show();
 
-        JSONObject parameters = new JSONObject();
-        try {
-            parameters.put("Authorization", "Bearer " + token);
-        } catch (Exception e) {
-        }
-        final JsonObjectRequest stringRequest = new JsonObjectRequest(GET, CatalogAPI.URL_SELECT,
-                null, new Response.Listener<JSONObject>() {
+        final JsonObjectRequest stringRequest = new JsonObjectRequest(GET, CatalogAPI.URL_SELECT
+                , null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                //Disini bagian jika response jaringan berhasil tidak terdapat ganguan/error
                 progressDialog.dismiss();
                 try {
+                    //Mengambil data response json object yang berupa data mahasiswa
                     JSONArray jsonArray = response.getJSONArray("data");
-
                     if(!ListBarang.isEmpty())
                         ListBarang.clear();
 
@@ -199,11 +199,23 @@ public class CatalogFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                //Disini bagian jika response jaringan terdapat ganguan/error
                 progressDialog.dismiss();
                 Toast.makeText(view.getContext(), error.getMessage(),
                         Toast.LENGTH_SHORT).show();
             }
-        });
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String,String> headers = new HashMap<>();
+
+                headers.put("Content-Type","application/x-www-form-urlencoded");
+                headers.put("Authorization","Bearer " + token);
+                return headers;
+            }
+        };
+        // Disini proses penambahan request yang sudah kita buat ke request queue yang sudah dideklarasi
         queue.add(stringRequest);
     }
+
 }
