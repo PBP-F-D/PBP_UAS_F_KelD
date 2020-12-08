@@ -11,10 +11,6 @@ public class Barang implements Serializable {
     public String kategori;
     public String imgURL;
 
-    public Barang() {
-
-    }
-
     public Barang(String nama, double harga, int stok, String kategori, String imgURL) {
         this.nama = nama;
         this.harga = harga;

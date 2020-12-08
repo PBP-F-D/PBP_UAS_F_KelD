@@ -6,16 +6,21 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -31,7 +36,9 @@ import com.tubespbp.petshop.ui.profile.model.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,7 +57,9 @@ public class SignUpActivity extends AppCompatActivity {
     //Camera
     private static final int PERMISSION_CODE = 1000;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
-    Uri imgUri;
+    private Uri imgUri, selectedImage = null;
+    private Bitmap bitmap;
+    private String stringImage = "";
 
     Constant constant;
     SharedPreferences.Editor editor;
@@ -154,13 +163,42 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            System.out.println("masukkkkk");
             Glide.with(this)
                     .load(imgUri)
                     .into(profilePict);
+//            Bundle extras = data.getExtras();
+//            bitmap = (Bitmap) extras.get("data");
+//            profilePict.setImageBitmap(bitmap);
+//            bitmap = getResizedBitmap(bitmap, 512);
+//            stringImage = getBase64String(bitmap);
         }
+    }
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
+    private String getBase64String(Bitmap bitmap)
+    {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        String base64String = Base64.encodeToString(imageBytes, Base64.NO_WRAP);
+        return base64String;
     }
 
     //Camera
@@ -169,12 +207,13 @@ public class SignUpActivity extends AppCompatActivity {
         values.put(MediaStore.Images.Media.TITLE, "New Picture");
         values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
         imgUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-        // Create the camera_intent ACTION_IMAGE_CAPTURE. it will open the camera for capture the image
+//         Create the camera_intent ACTION_IMAGE_CAPTURE. it will open the camera for capture the image
         Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         camera_intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
         // Start the activity with camera_intent, and request pic id
         startActivityForResult(camera_intent, REQUEST_IMAGE_CAPTURE);
     }
+
 
     //Checking email validity
     public static boolean isEmailValid(String email) {
@@ -201,7 +240,7 @@ public class SignUpActivity extends AppCompatActivity {
         final String countrySign = country.getText().toString();
 
         //Input Sign Up Exception
-        if (imgUri == null) {
+        if (stringImage == "") {
             Toast.makeText(this, "Upload your image", Toast.LENGTH_SHORT).show();
         }
         if (emailSign.isEmpty()) emailLayout.setError("Please enter your email");
@@ -223,7 +262,7 @@ public class SignUpActivity extends AppCompatActivity {
         if (countrySign.isEmpty()) countryLayout.setError("Please enter your country");
         else countryLayout.setError(null);
 
-        if (imgUri != null && isEmailValid(emailSign) && !emailSign.isEmpty() && !nameSign.isEmpty() && !passSign.isEmpty()
+        if (stringImage != "" && isEmailValid(emailSign) && !emailSign.isEmpty() && !nameSign.isEmpty() && !passSign.isEmpty()
                 && !phoneSign.isEmpty() && !citySign.isEmpty() && !countrySign.isEmpty()) {
 
             progressDialog.setMessage("Processing....");
@@ -231,6 +270,7 @@ public class SignUpActivity extends AppCompatActivity {
             progressDialog.show();
 
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+//            Call<UserResponse> add = apiService.register(nameSign, emailSign, passSign, phoneSign, citySign, countrySign, stringImage);
             Call<UserResponse> add = apiService.register(nameSign, emailSign, passSign, phoneSign, citySign, countrySign, imgUri.toString());
             System.out.println("Masuk call response");
 
