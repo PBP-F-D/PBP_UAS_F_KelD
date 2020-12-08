@@ -96,8 +96,8 @@ public class CatalogFragment extends Fragment {
             main.setTheme(appTheme);
         }
 
-//        view = catalogBinding.getRoot();
-        view = inflater.inflate(R.layout.fragment_catalog, container, false);
+        view = catalogBinding.getRoot();
+//        view = inflater.inflate(R.layout.fragment_catalog, container, false);
 
         //Mengambil Bundle dari HomeFragment
         if (getArguments() != null)
@@ -108,43 +108,19 @@ public class CatalogFragment extends Fragment {
         shared = getActivity().getSharedPreferences("getId", Context.MODE_PRIVATE);
         token = shared.getString("token", null);
 
-        //List barang baru yang dikosongkan
-        newList = new ArrayList<Barang>();
+        //Daftar Semua List Barang
         ListBarang = new ArrayList<Barang>();
+        getBarang();
 
         //Recycler View
         recyclerView = catalogBinding.rvKatalog;
 
-        //Menampilkan list barang baru
+        //Set Adapter
         adapter = new RecyclerViewAdapterKatalog(ListBarang);
         recyclerView.setAdapter(adapter);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
-
-        //Daftar Semua List Barang
-        getBarang();
-
-        //Membandingkan nama/kategori supaya dimasukkan ke list baru
-        switch(name) {
-            case "Dogs":
-                for (int i=0; i<ListBarang.size(); i++)
-                    if(ListBarang.get(i).getKategori().equals("Dog"))
-                        newList.add(ListBarang.get(i));
-                break;
-            case "Cats":
-                for (int i=0; i<ListBarang.size(); i++)
-                    if(ListBarang.get(i).getKategori().equals("Cat"))
-                        newList.add(ListBarang.get(i));
-                break;
-            case "Other":
-                for (int i=0; i<ListBarang.size(); i++)
-                    if(ListBarang.get(i).getKategori().equals("Other"))
-                        newList.add(ListBarang.get(i));
-                break;
-            default:
-                break;
-        }
 
         return view;
     }
@@ -187,7 +163,23 @@ public class CatalogFragment extends Fragment {
                         String gambar   = jsonObject.optString("img_barang");
 
                         Barang barang = new Barang(idBarang, nama,harga,stok,kategori,gambar);
-                        ListBarang.add(barang);
+
+                        switch(name) {
+                            case "Dogs":
+                                if(barang.getKategori().equals("Dog"))
+                                    ListBarang.add(barang);
+                                break;
+                            case "Cats":
+                                if(barang.getKategori().equals("Cat"))
+                                    ListBarang.add(barang);
+                                break;
+                            case "Other":
+                                if(barang.getKategori().equals("Other"))
+                                    ListBarang.add(barang);
+                                break;
+                            default:
+                                break;
+                        }
                     }
                     adapter.notifyDataSetChanged();
                 }catch (JSONException e){

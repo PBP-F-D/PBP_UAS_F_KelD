@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -52,6 +53,7 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
     private List<Barang> result;
     SharedPreferences shared;
     int idUser;
+    String token;
     private RecyclerViewAdapterKatalog.deleteItemListener mListener;
 
     public RecyclerViewAdapterKatalog(List<Barang> result) {
@@ -78,6 +80,7 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
         //Get idUser from sharedpreferences
         shared = context.getSharedPreferences("getId", Context.MODE_PRIVATE);
         idUser = shared.getInt("idUser", -1);
+        token = shared.getString("token", null);
 
         KatalogBarangBinding binding = KatalogBarangBinding.inflate(layoutInflater, viewGroup, false);
         return new KatalogViewHolder(binding);
@@ -86,20 +89,19 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
     @Override
     public void onBindViewHolder(@NonNull final KatalogViewHolder holder, int position) {
         final Barang brg = result.get(position);
-//        holder.bind(brg);
 
         NumberFormat formatter = new DecimalFormat("#,###");
         holder.txtNama.setText(brg.getNama());
-        holder.txtHarga.setText("Rp "+ formatter.format(brg.getHarga()));
-        holder.txtStok.setText(brg.getStok());
+        holder.txtHarga.setText(String.valueOf(brg.getHarga()));
+//        holder.txtStok.setText(String.valueOf(brg.getStok()));
 
 //        Glide.with(context)
-//                .load(CatalogAPI.URL_IMAGE+brg.getImgURL())
+//                .load(CatalogAPI.URL_IMAGE + brg.getImgURL())
 //                .diskCacheStrategy(DiskCacheStrategy.NONE)
 //                .skipMemoryCache(true)
 //                .into(holder.ivGambar);
 
-        holder.katalogBarangBinding.btnTambah.setOnClickListener(new View.OnClickListener() {
+        holder.btnTambah.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -150,25 +152,18 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
     }
 
     public class KatalogViewHolder extends RecyclerView.ViewHolder{
-        private KatalogBarangBinding katalogBarangBinding;
-        private TextView txtNama, txtStok, txtHarga, ivEdit, ivHapus;;
+        private TextView txtNama, txtStok, txtHarga, ivEdit, ivHapus;
         private ImageView ivFoto;
         private MaterialButton btnTambah;
 
-
         public KatalogViewHolder(KatalogBarangBinding itemView){
             super(itemView.getRoot());
-//            katalogBarangBinding = itemView;
             txtNama    = itemView.getRoot().findViewById(R.id.namaBarang);
             txtStok    = itemView.getRoot().findViewById(R.id.stok);
-            txtHarga   = itemView.getRoot().findViewById(R.id.tv_totalprice);
+            txtHarga   = itemView.getRoot().findViewById(R.id.hargaBarang);
             ivFoto     = itemView.getRoot().findViewById(R.id.ivFotoBarang);
             btnTambah  = itemView.getRoot().findViewById(R.id.btn_tambah);
         }
-//        public void bind(Barang barang) {
-//            katalogBarangBinding.setBrg(barang);
-//            katalogBarangBinding.executePendingBindings();
-//        }
     }
 
     private void addBarangToCart(@NonNull final KatalogViewHolder holder, final int value){
@@ -214,7 +209,7 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
         final ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("loading....");
-        progressDialog.setTitle("Menambahkan data buku");
+        progressDialog.setTitle("Menambahkan Barang ke cart");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.show();
 
@@ -267,6 +262,14 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
                 params.put("status_barang", "Not Paid");
 
                 return params;
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+
+                headers.put("Content-Type", "application/x-www-form-urlencoded");
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
             }
         };
 
