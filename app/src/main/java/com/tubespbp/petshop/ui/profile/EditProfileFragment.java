@@ -293,9 +293,9 @@ public class EditProfileFragment extends Fragment {
                 city.setText(sCity);
                 country.setText(sCountry);
 
-//                Glide.with(getContext())
-//                        .load(Uri.parse(sImage))
-//                        .into(image);
+                Glide.with(getContext())
+                        .load(sImage)
+                        .into(image);
             }
 
             @Override
