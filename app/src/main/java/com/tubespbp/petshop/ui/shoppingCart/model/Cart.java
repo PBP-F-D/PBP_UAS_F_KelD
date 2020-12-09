@@ -39,6 +39,15 @@ public class Cart implements Serializable {
         this.imgUrlC = imgUrlC;
     }
 
+    public Cart(String idUser, String namaB, int jumlahB, double totalB, String statusB, String imgUrlC) {
+        this.idUser = idUser;
+        this.namaB = namaB;
+        this.totalB = totalB;
+        this.jumlahB = jumlahB;
+        this.statusB = statusB;
+        this.imgUrlC = imgUrlC;
+    }
+
     public int getId() {
         return id;
     }

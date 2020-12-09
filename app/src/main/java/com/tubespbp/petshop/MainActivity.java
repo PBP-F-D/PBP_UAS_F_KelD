@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         themeColor = appColor;
         constant.color = appColor;
 
-        progressDialog = new ProgressDialog(this);
+            progressDialog = new ProgressDialog(this);
 
         if (themeColor == 0){
             setTheme(Constant.theme);

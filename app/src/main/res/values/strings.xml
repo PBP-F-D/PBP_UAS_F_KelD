@@ -74,6 +74,7 @@
 
     <string name="toolbar_edit_catalog">| Edit Catalog</string>
     <string name="toolbar_add_catalog">| Add Catalog</string>
+    <string name="nama_produk">Nama Produk</string>
 
     <string-array name="categories">
         <item>Dog</item>
