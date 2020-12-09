@@ -15,19 +15,19 @@ public class CreatePresenter {
 
     public void onCreateClicked() {
         if (view.getNamaBarang().isEmpty()) {
-            view.showNamaBarangError("Nama Barang tidak boleh kosong");
+            view.showNamaBarangError("Nama Barang Tidak Boleh Kosong");
             return;
         } else if (view.getStok().isEmpty() ) {
-            view.showStokError("Stok tidak boleh kosong");
+            view.showStokError("Stok Tidak Boleh Kosong");
             return;
         } else if (view.getHarga().isEmpty() ) {
-            view.showHargaError("Harga tidak boleh kosong");
+            view.showHargaError("Harga Tidak Boleh Kosong");
             return;
         } else if (view.getKategori().isEmpty() ) {
-            view.showKategoriError("Kategori tidak boleh kosong");
+            view.showKategoriError("Kategori Tidak Boleh Kosong");
             return;
         } else if (view.getUrl().isEmpty() ) {
-            view.showUrlError("Url tidak boleh kosong");
+            view.showUrlError("Url Tidak Boleh Kosong");
             return;
         } else {
             service.addProduct(view, view.getNamaBarang(), Integer.parseInt(view.getStok()), Double.parseDouble(view.getHarga())

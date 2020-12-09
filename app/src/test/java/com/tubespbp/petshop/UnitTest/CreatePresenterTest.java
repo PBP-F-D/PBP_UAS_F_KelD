@@ -26,6 +26,14 @@ public class CreatePresenterTest {
     public void shouldShowErrorMessageWhenNamaBarangIsEmpty() throws Exception {
         when(view.getNamaBarang()).thenReturn("");
         System.out.println("Nama Barang : "+view.getNamaBarang());
+        when(view.getStok()).thenReturn("20");
+        System.out.println("Stok : "+view.getStok());
+        when(view.getHarga()).thenReturn("20000");
+        System.out.println("Harga : "+view.getHarga());
+        when(view.getKategori()).thenReturn("Dog");
+        System.out.println("Kategori : "+view.getKategori());
+        when(view.getUrl()).thenReturn("https://media.tractorsupply.com/is/image/TractorSupplyCompany/5048134?$456$");
+        System.out.println("Url : "+view.getUrl());
         presenter.onCreateClicked();
         verify(view).showNamaBarangError("Nama Barang Tidak Boleh Kosong");
     }
@@ -35,6 +43,12 @@ public class CreatePresenterTest {
         System.out.println("Nama Barang : "+ view.getNamaBarang());
         when(view.getStok()).thenReturn("");
         System.out.println("Stok : "+view.getStok());
+        when(view.getHarga()).thenReturn("20000");
+        System.out.println("Harga : "+view.getHarga());
+        when(view.getKategori()).thenReturn("Dog");
+        System.out.println("Kategori : "+view.getKategori());
+        when(view.getUrl()).thenReturn("https://media.tractorsupply.com/is/image/TractorSupplyCompany/5048134?$456$");
+        System.out.println("Url : "+view.getUrl());
         presenter.onCreateClicked();
         verify(view).showStokError("Stok Tidak Boleh Kosong");
     }
@@ -46,8 +60,12 @@ public class CreatePresenterTest {
         System.out.println("Stok : "+ view.getStok());
         when(view.getHarga()).thenReturn("");
         System.out.println("Harga : "+view.getHarga());
+        when(view.getKategori()).thenReturn("Dog");
+        System.out.println("Kategori : "+view.getKategori());
+        when(view.getUrl()).thenReturn("https://media.tractorsupply.com/is/image/TractorSupplyCompany/5048134?$456$");
+        System.out.println("Url : "+view.getUrl());
         presenter.onCreateClicked();
-        verify(view).showStokError("Harga Tidak Boleh Kosong");
+        verify(view).showHargaError("Harga Tidak Boleh Kosong");
     }
 
     @Test
@@ -60,8 +78,10 @@ public class CreatePresenterTest {
         System.out.println("Harga : "+ view.getHarga());
         when(view.getKategori()).thenReturn("");
         System.out.println("Kategori : "+view.getKategori());
+        when(view.getUrl()).thenReturn("https://media.tractorsupply.com/is/image/TractorSupplyCompany/5048134?$456$");
+        System.out.println("Url : "+view.getUrl());
         presenter.onCreateClicked();
-        verify(view).showStokError("Kategori Tidak Boleh Kosong");
+        verify(view).showKategoriError("Kategori Tidak Boleh Kosong");
     }
 
     @Test
@@ -77,7 +97,7 @@ public class CreatePresenterTest {
         when(view.getUrl()).thenReturn("");
         System.out.println("Url : "+view.getUrl());
         presenter.onCreateClicked();
-        verify(view).showStokError("Url Tidak Boleh Kosong");
+        verify(view).showUrlError("Url Tidak Boleh Kosong");
     }
     @Test
     public void shouldStartCatalogFragmentWhenAllDataAreCorrect() throws
