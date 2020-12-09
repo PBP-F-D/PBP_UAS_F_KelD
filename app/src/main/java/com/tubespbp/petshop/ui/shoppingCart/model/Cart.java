@@ -21,6 +21,7 @@ public class Cart implements Serializable {
     public double hargaB;
     public int jumlahB;
     public double totalB;
+
     public String statusB;
     public String imgUrlC;
 
@@ -54,6 +55,14 @@ public class Cart implements Serializable {
 
     public String getNamaB() {
         return namaB;
+    }
+
+    public String getStatusB() {
+        return statusB;
+    }
+
+    public void setStatusB(String statusB) {
+        this.statusB = statusB;
     }
 
     public void setNamaB(String namaB) {

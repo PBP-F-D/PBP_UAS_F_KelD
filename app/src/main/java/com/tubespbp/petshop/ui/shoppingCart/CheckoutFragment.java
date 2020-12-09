@@ -1,9 +1,9 @@
 package com.tubespbp.petshop.ui.shoppingCart;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.databinding.DataBindingUtil;
@@ -19,22 +19,32 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.button.MaterialButton;
 import com.tubespbp.petshop.API.ApiClient;
 import com.tubespbp.petshop.API.ApiInterface;
+import com.tubespbp.petshop.API.CartAPI;
 import com.tubespbp.petshop.API.User.UserResponse;
 import com.tubespbp.petshop.Constant;
 import com.tubespbp.petshop.MainActivity;
 import com.tubespbp.petshop.R;
 import com.tubespbp.petshop.databinding.FragmentCheckoutBinding;
-import com.tubespbp.petshop.ui.profile.database.DatabaseClientUser;
 import com.tubespbp.petshop.ui.profile.model.User;
-import com.tubespbp.petshop.ui.shoppingCart.adapter.RecyclerViewAdapterCart;
 import com.tubespbp.petshop.ui.shoppingCart.adapter.RecyclerViewAdapterCheckout;
 import com.tubespbp.petshop.ui.shoppingCart.model.Cart;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,6 +60,7 @@ public class CheckoutFragment extends Fragment {
     private TextView totalprice, customername;
     private MaterialButton cancelBtn, confirmBtn;
     private double total = 0;
+    private View view;
 
     SharedPreferences shared;
     private List<User> userList;
@@ -94,7 +105,7 @@ public class CheckoutFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         checkoutBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_checkout, container, false);
-        View view = checkoutBinding.getRoot();
+        view = checkoutBinding.getRoot();
 
         //Get ArrayList from Bundle
         ArrayList<Cart> cartList = (ArrayList<Cart>) getArguments().getSerializable(KEY_ARRAY);
@@ -149,7 +160,15 @@ public class CheckoutFragment extends Fragment {
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Check-out Successful", Toast.LENGTH_SHORT).show();
                 for(int i=0; i<cartList.size(); i++) {
-                    deleteData(cartList.get(i));
+                    if(cartList.get(i) != null && cartList.get(i).getIdUser().equals(String.valueOf(idUser))) {
+                        Cart cart = cartList.get(i);
+                        if(cart.getStatusB().equals("Not Paid"))
+                            checkout(cart.getId(),
+                                    cart.getJumlahB(),
+                                    cart.getImgUrlC(),
+                                    cart.getNamaB(),
+                                    String.valueOf(cart.getHargaB()));
+                    }
                 }
                 Navigation.findNavController(view).navigate(
                         R.id.action_checkoutFragment_to_navigation_dashboard);
@@ -177,8 +196,58 @@ public class CheckoutFragment extends Fragment {
         });
     }
 
-    private void deleteData(final Cart cart){
+    private void checkout(final int id, final int value, final String gambar, final String namaBarang, final String hargaBarang){
+        RequestQueue queue = Volley.newRequestQueue(view.getContext());
 
+        StringRequest stringRequest = new StringRequest(Request.Method.PUT, CartAPI.URL_UPDATE + id,
+                new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    if(obj.getString("status").equals("Success")) {
+                        Toast.makeText(view.getContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
+                    }
+                    Toast.makeText(view.getContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(view.getContext(),"Unable to checkout: " + error.toString(), Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("nama_barang", namaBarang);
+                params.put("jmlbeli_barang", String.valueOf(value));
+                params.put("harga_barang", hargaBarang);
+                params.put("img_barang", gambar);
+                params.put("user_barang", String.valueOf(idUser));
+                params.put("status_barang", "Paid");
+
+                System.out.println("params set!");
+                System.out.println(namaBarang);
+                System.out.println(value);
+                System.out.println(hargaBarang);
+                System.out.println(gambar);
+                System.out.println(idUser);
+
+                return params;
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String,String> headers = new HashMap<>();
+
+                headers.put("Content-Type","application/x-www-form-urlencoded");
+                headers.put("Authorization","Bearer " + token);
+                return headers;
+            }
+        };
+        queue.add(stringRequest);
     }
 
 }
