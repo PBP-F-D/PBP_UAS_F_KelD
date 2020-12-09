@@ -95,7 +95,7 @@ public class Cart implements Serializable {
     }
 
     public double getTotalB() {
-        return totalB;
+        return jumlahB * hargaB;
     }
 
     public void setTotalB(double totalB) {

@@ -165,6 +165,12 @@ public class AddToCartActivityTest {
                                 3)));
         materialButton7.perform(scrollTo(), click());
 
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         ViewInteraction materialButton8 = onView(
                 allOf(withId(R.id.btn_tambah), withText("Add to cart"),
                         childAtPosition(
