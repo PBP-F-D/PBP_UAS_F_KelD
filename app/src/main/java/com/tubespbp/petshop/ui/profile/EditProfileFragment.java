@@ -201,21 +201,6 @@ public class EditProfileFragment extends Fragment {
         }
     }
 
-    //Get thumbnail from the photo taken and show it
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-//            Glide.with(getContext())
-//                    .load(imgUri)
-//                    .into(image);
-//        } else if(resultCode == RESULT_OK) {
-//            Bundle extras = data.getExtras();
-//            bitmap = (Bitmap) extras.get("data");
-//            image.setImageBitmap(bitmap);
-//            bitmap = getResizedBitmap(bitmap, 512);
-//        }
-//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -337,10 +322,12 @@ public class EditProfileFragment extends Fragment {
 
             String gambar = "";
             if (bitmap != null){
+                System.out.println("BITMAP GA NULL");
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG,100,byteArrayOutputStream);
                 byte[] bytes = byteArrayOutputStream.toByteArray();
                 gambar = Base64.encodeToString(bytes, Base64.DEFAULT);
+                System.out.println("BASE64" + gambar);
             }
 
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
