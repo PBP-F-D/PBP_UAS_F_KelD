@@ -50,8 +50,8 @@ public interface ApiInterface {
                                   @Field("email") String email,
                                   @Field("country") String country,
                                   @Field("city") String city,
-                                  @Field("phone") String phone, //TODO: Replace with img_user in AuthController
-                                  @Field("picture") String photo,
+                                  @Field("phone") String phone,
+                                  @Field("img_user") String img_user,
                                   @Header("Authorization") String authToken);
 //    @POST("user/delete/{id}")
 //    Call<UserResponse> deleteUser(@Path("id")String id);

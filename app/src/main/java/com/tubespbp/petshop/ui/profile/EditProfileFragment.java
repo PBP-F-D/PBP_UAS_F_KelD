@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -22,6 +24,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
 
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +50,9 @@ import com.tubespbp.petshop.ui.profile.model.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -65,6 +70,7 @@ public class EditProfileFragment extends Fragment {
     private CircleImageView image;
     FragmentEditProfileBinding editProfileBinding;
     private String sIdUser, sName, sEmail, sCountry, sCity, sPhone, sImage;
+    private View view;
 
     SharedPreferences shared;
     int idUser;
@@ -77,6 +83,8 @@ public class EditProfileFragment extends Fragment {
     private static final int PERMISSION_CODE = 1000;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     Uri imgUri;
+    private Uri selectedImage = null;
+    private Bitmap bitmap;
 
     private ProgressDialog progressDialog;
 
@@ -94,7 +102,7 @@ public class EditProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         editProfileBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit_profile, container, false);
-        View root = editProfileBinding.getRoot();
+        view = inflater.inflate(R.layout.fragment_edit_profile, container, false);
 
         //Get sharepreferences for ID user
         shared = getActivity().getSharedPreferences("getId", Context.MODE_PRIVATE);
@@ -113,12 +121,12 @@ public class EditProfileFragment extends Fragment {
         sPhone = i.getStringExtra("phone");
         sImage = i.getStringExtra("image");
 
-        image = root.findViewById(R.id.profile_image_edit);
+        image = view.findViewById(R.id.profile_image_edit);
 
         //Fill the field with previous values
         getUsers();
 
-        return root;
+        return view;
     }
 
     @Override
@@ -194,27 +202,76 @@ public class EditProfileFragment extends Fragment {
     }
 
     //Get thumbnail from the photo taken and show it
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+//            Glide.with(getContext())
+//                    .load(imgUri)
+//                    .into(image);
+//        } else if(resultCode == RESULT_OK) {
+//            Bundle extras = data.getExtras();
+//            bitmap = (Bitmap) extras.get("data");
+//            image.setImageBitmap(bitmap);
+//            bitmap = getResizedBitmap(bitmap, 512);
+//        }
+//    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Glide.with(getContext())
-                    .load(imgUri)
-                    .into(image);
+        if (resultCode == RESULT_OK && requestCode == 1)
+        {
+            selectedImage = data.getData();
+            try {
+                InputStream inputStream = getActivity().getContentResolver().openInputStream(selectedImage);
+                bitmap = BitmapFactory.decodeStream(inputStream);
+            } catch (Exception e) {
+                Toast.makeText(view.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+            image.setImageBitmap(bitmap);
+            bitmap = getResizedBitmap(bitmap, 512);
         }
+        else if(resultCode == RESULT_OK && requestCode == 2)
+        {
+            Bundle extras = data.getExtras();
+            bitmap = (Bitmap) extras.get("data");
+            image.setImageBitmap(bitmap);
+            bitmap = getResizedBitmap(bitmap, 512);
+        }
+    }
+
+
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
     }
 
     //Camera
     public void capturePhoto() {
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE,"New Picture");
-        values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
-        imgUri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-        // Create the camera_intent ACTION_IMAGE_CAPTURE. it will open the camera for capture the image
-        Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        camera_intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
-        // Start the activity with camera_intent, and request pic id
-        startActivityForResult(camera_intent, REQUEST_IMAGE_CAPTURE);
+//        ContentValues values = new ContentValues();
+//        values.put(MediaStore.Images.Media.TITLE,"New Picture");
+//        values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
+//        imgUri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+//        // Create the camera_intent ACTION_IMAGE_CAPTURE. it will open the camera for capture the image
+//        Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        camera_intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
+//        // Start the activity with camera_intent, and request pic id
+//        startActivityForResult(camera_intent, REQUEST_IMAGE_CAPTURE);
+
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent,2);
     }
 
     private void getUsers(){
@@ -232,7 +289,6 @@ public class EditProfileFragment extends Fragment {
                 sCountry = response.body().getUsers().getCountry();
                 sImage = response.body().getUsers().getPhoto();
                 name.setText(sName);
-//                email.setText(sEmail);
                 phone.setText(sPhone);
                 city.setText(sCity);
                 country.setText(sCountry);
@@ -247,35 +303,6 @@ public class EditProfileFragment extends Fragment {
                 Toast.makeText(getContext(), "Kesalahan Jaringan", Toast.LENGTH_SHORT).show();
             }
         });
-
-//        class GetUsers extends AsyncTask<Void, Void, List<User>>{
-//
-//            @Override
-//            protected List<User> doInBackground(Void... voids) {
-//                userList = DatabaseClientUser
-//                        .getInstance(getActivity().getApplicationContext())
-//                        .getDatabaseUser()
-//                        .signUpDAO()
-//                        .getUser(idUser);
-//                return userList;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(List<User> users) {
-//                super.onPostExecute(users);
-//                if (users.isEmpty()){
-//                    Toast.makeText(getActivity(), "No logged-in user", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    Glide.with(getContext())
-//                            .load(Uri.parse(userList.get(0).getImage()))
-//                            .into(image);
-//                    editProfileBinding.setUserEdit(userList.get(0));
-//                    imgUri = Uri.parse(userList.get(0).getImage());
-//                }
-//            }
-//        }
-//        GetUsers get = new GetUsers();
-//        get.execute();
     }
 
     private void update(View view) {
@@ -305,10 +332,17 @@ public class EditProfileFragment extends Fragment {
             progressDialog.setProgressStyle(android.app.ProgressDialog.STYLE_SPINNER);
             progressDialog.show();
 
+            String gambar = "";
+            if (bitmap != null){
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG,100,byteArrayOutputStream);
+                byte[] bytes = byteArrayOutputStream.toByteArray();
+                gambar = Base64.encodeToString(bytes, Base64.DEFAULT);
+            }
+
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
             Call<UserResponse> req = apiService.updateUser(String.valueOf(idUser), nameEdit,
-                    sEmail, countryEdit, cityEdit, phoneEdit, "", //TODO: Change to imgUri after photo is replaced with img_user
-                    //String.valueOf(imgUri),
+                    sEmail, countryEdit, cityEdit, phoneEdit, gambar,
                     "Bearer " + token);
 
             req.enqueue(new Callback<UserResponse>() {
