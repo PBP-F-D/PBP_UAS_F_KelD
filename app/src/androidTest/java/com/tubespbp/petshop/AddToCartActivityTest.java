@@ -79,6 +79,12 @@ public class AddToCartActivityTest {
                         isDisplayed()));
         cardView.perform(click());
 
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         ViewInteraction materialButton2 = onView(
                 allOf(withId(R.id.btn_tambah), withText("Add to cart"),
                         childAtPosition(
@@ -86,7 +92,7 @@ public class AddToCartActivityTest {
                                         childAtPosition(
                                                 withId(R.id.rv_katalog),
                                                 0)),
-                                1),
+                                3),
                         isDisplayed()));
         materialButton2.perform(click());
 
