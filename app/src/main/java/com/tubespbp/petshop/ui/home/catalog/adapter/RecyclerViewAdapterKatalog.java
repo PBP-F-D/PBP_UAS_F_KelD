@@ -141,10 +141,14 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
 
                 alert.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        if(input.getText().toString().equals(""))
-                            return; //prevent crash if input is empty
+                        if(input.getText().toString().equals("")) {
+                            Toast.makeText(holder.itemView.getContext(), "Quantity can't be empty", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
 
                         Integer value = Integer.parseInt(String.valueOf(input.getText()));
+                        System.out.println("value" + value);
                         //adds item to cart if input is greater than zero
                         if(value > 0) {
 //                            String gambar = "";
@@ -162,6 +166,8 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
                                 Toast.makeText(holder.itemView.getContext(),value.toString() + "x " + brg.getNama()+" has been added to cart", Toast.LENGTH_SHORT).show();
                             else
                                 Toast.makeText(holder.itemView.getContext(),value.toString() + "x " + brg.getNama()+"(s) have been added to cart", Toast.LENGTH_SHORT).show();
+                        } else if (value <= 0){
+                            Toast.makeText(holder.itemView.getContext(), "Quantity can't be 0 or less", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -212,7 +218,7 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
                 progressDialog.dismiss();
                 try {
                     JSONObject obj = new JSONObject(response);
-                    if(obj.getString("status").equals("Success")) {
+                    if(obj.getString("message").equals("Success")) {
                         Toast.makeText(view.getContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
                     }
                     Toast.makeText(view.getContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();

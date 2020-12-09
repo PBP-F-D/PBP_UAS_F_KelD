@@ -133,19 +133,19 @@ public class CatalogFragment extends Fragment {
     public void getBarang() {
         RequestQueue queue = Volley.newRequestQueue(view.getContext());
 
-        final ProgressDialog progressDialog;
-        progressDialog = new ProgressDialog(view.getContext());
-        progressDialog.setMessage("loading....");
-        progressDialog.setTitle("Menampilkan data catalog");
-        progressDialog.setProgressStyle(android.app.ProgressDialog.STYLE_SPINNER);
-        progressDialog.show();
+//        final ProgressDialog progressDialog;
+//        progressDialog = new ProgressDialog(view.getContext());
+//        progressDialog.setMessage("loading....");
+//        progressDialog.setTitle("Menampilkan data catalog");
+//        progressDialog.setProgressStyle(android.app.ProgressDialog.STYLE_SPINNER);
+//        progressDialog.show();
 
         final JsonObjectRequest stringRequest = new JsonObjectRequest(GET, CatalogAPI.URL_SELECT
                 , null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 //Disini bagian jika response jaringan berhasil tidak terdapat ganguan/error
-                progressDialog.dismiss();
+//                progressDialog.dismiss();
                 try {
                     //Mengambil data response json object yang berupa data mahasiswa
                     JSONArray jsonArray = response.getJSONArray("data");
@@ -192,7 +192,7 @@ public class CatalogFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 //Disini bagian jika response jaringan terdapat ganguan/error
-                progressDialog.dismiss();
+//                progressDialog.dismiss();
                 Toast.makeText(view.getContext(), error.getMessage(),
                         Toast.LENGTH_SHORT).show();
             }

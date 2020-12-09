@@ -165,16 +165,22 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        if (requestCode == 2 && resultCode == RESULT_OK) {
             System.out.println("masukkkkk");
+//            Glide.with(this)
+//                    .load(imgUri)
+//                    .into(profilePict);
+            Bundle extras = data.getExtras();
+            bitmap = (Bitmap) extras.get("data");
+            System.out.println("bitmap " + bitmap);
+
             Glide.with(this)
-                    .load(imgUri)
-                    .into(profilePict);
-//            Bundle extras = data.getExtras();
-//            bitmap = (Bitmap) extras.get("data");
+                .load(bitmap)
+                .into(profilePict);
+
 //            profilePict.setImageBitmap(bitmap);
-//            bitmap = getResizedBitmap(bitmap, 512);
-//            stringImage = getBase64String(bitmap);
+            bitmap = getResizedBitmap(bitmap, 512);
+            stringImage = getBase64String(bitmap);
         }
     }
     public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
@@ -203,15 +209,17 @@ public class SignUpActivity extends AppCompatActivity {
 
     //Camera
     public void capturePhoto() {
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, "New Picture");
-        values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
-        imgUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-//         Create the camera_intent ACTION_IMAGE_CAPTURE. it will open the camera for capture the image
-        Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        camera_intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
-        // Start the activity with camera_intent, and request pic id
-        startActivityForResult(camera_intent, REQUEST_IMAGE_CAPTURE);
+//        ContentValues values = new ContentValues();
+//        values.put(MediaStore.Images.Media.TITLE, "New Picture");
+//        values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera");
+//        imgUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+////         Create the camera_intent ACTION_IMAGE_CAPTURE. it will open the camera for capture the image
+//        Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        camera_intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
+//        // Start the activity with camera_intent, and request pic id
+//        startActivityForResult(camera_intent, REQUEST_IMAGE_CAPTURE);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent,2);
     }
 
 
@@ -240,7 +248,7 @@ public class SignUpActivity extends AppCompatActivity {
         final String countrySign = country.getText().toString();
 
         //Input Sign Up Exception
-        if (imgUri == null) {
+        if (stringImage.equals("")) {
             Toast.makeText(this, "Upload your image", Toast.LENGTH_SHORT).show();
         }
         if (emailSign.isEmpty()) emailLayout.setError("Please enter your email");
@@ -262,7 +270,7 @@ public class SignUpActivity extends AppCompatActivity {
         if (countrySign.isEmpty()) countryLayout.setError("Please enter your country");
         else countryLayout.setError(null);
 
-        if (imgUri != null && isEmailValid(emailSign) && !emailSign.isEmpty() && !nameSign.isEmpty() && !passSign.isEmpty()
+        if (!stringImage.equals("") && isEmailValid(emailSign) && !emailSign.isEmpty() && !nameSign.isEmpty() && !passSign.isEmpty()
                 && !phoneSign.isEmpty() && !citySign.isEmpty() && !countrySign.isEmpty()) {
 
             progressDialog.setMessage("Processing....");
@@ -270,8 +278,8 @@ public class SignUpActivity extends AppCompatActivity {
             progressDialog.show();
 
             ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-//            Call<UserResponse> add = apiService.register(nameSign, emailSign, passSign, phoneSign, citySign, countrySign, stringImage);
-            Call<UserResponse> add = apiService.register(nameSign, emailSign, passSign, phoneSign, citySign, countrySign, imgUri.toString());
+            Call<UserResponse> add = apiService.register(nameSign, emailSign, passSign, phoneSign, citySign, countrySign, stringImage);
+//            Call<UserResponse> add = apiService.register(nameSign, emailSign, passSign, phoneSign, citySign, countrySign, imgUri.toString());
             System.out.println("Masuk call response");
 
             add.enqueue(new Callback<UserResponse>() {
@@ -287,6 +295,7 @@ public class SignUpActivity extends AppCompatActivity {
                         try {
                             JSONObject error = new JSONObject(response.errorBody().string());
                             Toast.makeText(SignUpActivity.this, error.optString("message"), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignUpActivity.this, "error", Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         } catch (IOException e) {
