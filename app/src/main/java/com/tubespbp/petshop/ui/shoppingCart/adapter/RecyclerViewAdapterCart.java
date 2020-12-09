@@ -21,6 +21,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.button.MaterialButton;
 import com.tubespbp.petshop.API.CartAPI;
 import com.tubespbp.petshop.R;
@@ -86,6 +88,12 @@ public class RecyclerViewAdapterCart extends RecyclerView.Adapter< RecyclerViewA
         cart.setTotalB(cart.getHargaB() * cart.getJumlahB());
         holder.txtTotal.setText(String.valueOf(cart.getTotalB()));
 
+        Glide.with(context)
+                .load(CartAPI.URL_IMAGE+cart.getImgUrlC())
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(holder.ivImage);
+
         holder.removeItemBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -126,34 +134,11 @@ public class RecyclerViewAdapterCart extends RecyclerView.Adapter< RecyclerViewA
             ivImage = itemView.getRoot().findViewById(R.id.profile_image);
             removeItemBtn = itemView.getRoot().findViewById(R.id.removeItem);
         }
-
     }
 
     public Cart getItem(int position) {
         return cartList.get(position);
     }
-
-//    private void deleteData(final Cart cart, final CartViewHolder holder) {
-//        class DeleteItem extends AsyncTask<Void, Void, Void> {
-//
-//            @Override
-//            protected Void doInBackground(Void... voids) {
-//                DatabaseClient.getInstance(holder.itemView.getContext())
-//                        .getDatabase()
-//                        .userDAO()
-//                        .delete(cart);
-//                return null;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(Void aVoid) {
-//                super.onPostExecute(aVoid);
-//                Toast.makeText(holder.itemView.getContext(), "Item removed from cart", Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//
-//        DeleteItem delete = new DeleteItem();
-//        delete.execute();
 
 
     public void deleteData(int id){

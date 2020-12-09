@@ -22,9 +22,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -33,8 +35,11 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.button.MaterialButton;
+import com.tubespbp.petshop.API.ApiClient;
+import com.tubespbp.petshop.API.ApiInterface;
 import com.tubespbp.petshop.API.CartAPI;
 import com.tubespbp.petshop.API.CatalogAPI;
+import com.tubespbp.petshop.API.User.UserResponse;
 import com.tubespbp.petshop.LoginActivity;
 import com.tubespbp.petshop.R;
 import com.tubespbp.petshop.databinding.KatalogBarangBinding;
@@ -54,6 +59,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+
 import static android.content.ContentValues.TAG;
 import static com.android.volley.Request.Method.POST;
 import static com.mapbox.mapboxsdk.Mapbox.getApplicationContext;
@@ -65,6 +73,7 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
     int idUser;
     String token;
     private Bitmap bitmap;
+    private View view;
     private RecyclerViewAdapterKatalog.deleteItemListener mListener;
 
     public RecyclerViewAdapterKatalog(List<Barang> result) {
@@ -73,9 +82,9 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
 
     public RecyclerViewAdapterKatalog(Context context, List<Barang> result,
                           RecyclerViewAdapterKatalog.deleteItemListener mListener) {
-        this.context            = context;
-        this.result             = result;
-        this.mListener          = mListener;
+        this.context   = context;
+        this.result    = result;
+        this.mListener = mListener;
     }
 
     public interface deleteItemListener {
@@ -84,17 +93,17 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
 
     @NonNull
     @Override
-    public KatalogViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public RecyclerViewAdapterKatalog.KatalogViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
         context = viewGroup.getContext();
+        view = layoutInflater.inflate(R.layout.katalog_barang, viewGroup, false);
 
         //Get idUser from sharedpreferences
         shared = context.getSharedPreferences("getId", Context.MODE_PRIVATE);
         idUser = shared.getInt("idUser", -1);
         token = shared.getString("token", null);
 
-        KatalogBarangBinding binding = KatalogBarangBinding.inflate(layoutInflater, viewGroup, false);
-        return new KatalogViewHolder(binding);
+        return new KatalogViewHolder(view);
     }
 
     @Override
@@ -104,7 +113,6 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
         NumberFormat formatter = new DecimalFormat("#,###");
         holder.txtNama.setText(brg.getNama());
         holder.txtHarga.setText(String.valueOf(brg.getHarga()));
-//        holder.txtStok.setText(String.valueOf(brg.getStok()));
 
         Glide.with(context)
                 .load(brg.getImgURL())
@@ -115,8 +123,8 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
         holder.btnTambah.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String namaBarang = holder.txtNama.getText().toString();
-                String hargaBarang = holder.txtHarga.getText().toString();
+                final String namaBarang = holder.txtNama.getText().toString();
+                final String hargaBarang = holder.txtHarga.getText().toString();
 
                 //Creates alert dialog every time the add button is clicked asking for user's input
                 android.app.AlertDialog.Builder alert = new android
@@ -147,11 +155,11 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
                                 gambar = Base64.encodeToString(bytes, Base64.DEFAULT);
                             }
 
-                            addBarangToCart(holder, value, gambar, namaBarang, hargaBarang);
-//                            if(value == 1)
-////                                Toast.makeText(holder.itemView.getContext(),value.toString() + "x " + brg.getNama()+" has been added to cart", Toast.LENGTH_SHORT).show();
-////                            else
-////                                Toast.makeText(holder.itemView.getContext(),value.toString() + "x " + brg.getNama()+"(s) have been added to cart", Toast.LENGTH_SHORT).show();
+                            addBarangToCart(value, gambar, namaBarang, hargaBarang);
+                            if(value == 1)
+                                Toast.makeText(holder.itemView.getContext(),value.toString() + "x " + brg.getNama()+" has been added to cart", Toast.LENGTH_SHORT).show();
+                            else
+                                Toast.makeText(holder.itemView.getContext(),value.toString() + "x " + brg.getNama()+"(s) have been added to cart", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -173,52 +181,39 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
     }
 
     public class KatalogViewHolder extends RecyclerView.ViewHolder{
-        private TextView txtNama, txtStok, txtHarga, ivEdit, ivHapus;
+        private TextView txtNama, txtHarga;
         private ImageView ivFoto;
         private MaterialButton btnTambah;
 
-        public KatalogViewHolder(KatalogBarangBinding itemView){
-            super(itemView.getRoot());
-            txtNama    = itemView.getRoot().findViewById(R.id.namaBarang);
-            txtStok    = itemView.getRoot().findViewById(R.id.stok);
-            txtHarga   = itemView.getRoot().findViewById(R.id.hargaBarang);
-            ivFoto     = itemView.getRoot().findViewById(R.id.ivFotoBarang);
-            btnTambah  = itemView.getRoot().findViewById(R.id.btn_tambah);
+        public KatalogViewHolder(View itemView){
+            super(itemView);
+            txtNama    = itemView.findViewById(R.id.namaBarang);
+            txtHarga   = itemView.findViewById(R.id.hargaBarang);
+            ivFoto     = itemView.findViewById(R.id.ivFotoBarang);
+            btnTambah  = itemView.findViewById(R.id.btn_tambah);
         }
     }
 
-    private void addBarangToCart(@NonNull final KatalogViewHolder holder, final int value,
-                                 final String gambar, final String namaBarang, final String hargaBarang){
-
-        int jml =  value;
-        RequestQueue queue = Volley.newRequestQueue(context);
+    private void addBarangToCart(final int value, final String gambar, final String namaBarang, final String hargaBarang){
+        RequestQueue queue = Volley.newRequestQueue(view.getContext());
 
         final ProgressDialog progressDialog;
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Loading....");
-        progressDialog.setTitle("Adding Item to cart");
+        progressDialog = new ProgressDialog(view.getContext());
+        progressDialog.setMessage("Processing....");
+        progressDialog.setTitle("Adding item to cart");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.show();
 
-        StringRequest stringRequest = new StringRequest(POST, CartAPI.URL_ADD, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, CartAPI.URL_ADD, new com.android.volley.Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                //Disini bagian jika response jaringan berhasil tidak terdapat ganguan/error
                 progressDialog.dismiss();
                 try {
-                    //Mengubah response string menjadi object
                     JSONObject obj = new JSONObject(response);
-                    //obj.getString("message") digunakan untuk mengambil pesan status dari response
-                    if (obj.getString("status").equals("Success")) {
-                        JSONObject object = new JSONObject(response);
-
-                        //obj.getString("message") digunakan untuk mengambil pesan message dari response
-                        Toast.makeText(context, object.getString("message"), Toast.LENGTH_SHORT).show();
-                        notifyDataSetChanged();
-                    } else {
-                        //obj.getString("message") digunakan untuk mengambil pesan message dari response
-                        Toast.makeText(context, obj.getString("message"), Toast.LENGTH_SHORT).show();
+                    if(obj.getString("status").equals("Success")) {
+                        Toast.makeText(view.getContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
                     }
+                    Toast.makeText(view.getContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -226,45 +221,40 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                try {
-                    byte[] htmlBodyBytes = error.networkResponse.data;
-                    Toast.makeText(context, new String(htmlBodyBytes), Toast.LENGTH_SHORT).show();
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
+                //Disini bagian jika response jaringan terdapat ganguan/error
                 progressDialog.dismiss();
+                Toast.makeText(view.getContext(),"Unable to place order " + error.toString(), Toast.LENGTH_SHORT).show();
             }
         }){
             @Override
             protected Map<String, String> getParams() {
-                /*
-                    Disini adalah proses memasukan/mengirimkan parameter key dengan data value,
-                    dan nama key nya harus sesuai dengan parameter key yang diminta oleh jaringan
-                    API.
-                */
                 Map<String, String>  params = new HashMap<String, String>();
                 params.put("nama_barang", namaBarang);
-                params.put("jmlbeli_barang", String.valueOf(jml));
+                params.put("jmlbeli_barang", String.valueOf(value));
                 params.put("harga_barang", hargaBarang);
-                params.put("img_barang", gambar);
+                params.put("img_barang", "none"); //TODO: no image
                 params.put("user_barang", String.valueOf(idUser));
                 params.put("status_barang", "Not Paid");
+
+                System.out.println("params set!");
+                System.out.println(namaBarang);
+                System.out.println(value);
+                System.out.println(hargaBarang);
+                System.out.println(gambar);
+                System.out.println(idUser);
 
                 return params;
             }
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<>();
+                HashMap<String,String> headers = new HashMap<>();
 
-                headers.put("Content-Type", "application/form-data");
-//                headers.put("Content-Type","application/x-www-form-urlencoded");
-                headers.put("Authorization", "Bearer " + token);
-                headers.put("abc", "value");
+                headers.put("Content-Type","application/x-www-form-urlencoded");
+                headers.put("Authorization","Bearer " + token);
                 return headers;
             }
         };
 
-        //Disini proses penambahan request yang sudah kita buat ke reuest queue yang sudah dideklarasi
         queue.add(stringRequest);
     }
 }
