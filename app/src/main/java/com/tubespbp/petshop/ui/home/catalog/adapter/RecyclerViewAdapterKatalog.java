@@ -147,15 +147,17 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
                         Integer value = Integer.parseInt(String.valueOf(input.getText()));
                         //adds item to cart if input is greater than zero
                         if(value > 0) {
-                            String gambar = "";
-                            if (bitmap != null){
-                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                                bitmap.compress(Bitmap.CompressFormat.PNG,100,byteArrayOutputStream);
-                                byte[] bytes = byteArrayOutputStream.toByteArray();
-                                gambar = Base64.encodeToString(bytes, Base64.DEFAULT);
-                            }
+//                            String gambar = "";
+//                            if (bitmap != null){
+//                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//                                bitmap.compress(Bitmap.CompressFormat.PNG,100,byteArrayOutputStream);
+//                                byte[] bytes = byteArrayOutputStream.toByteArray();
+//                                gambar = Base64.encodeToString(bytes, Base64.DEFAULT);
+//                            }
 
-                            addBarangToCart(value, gambar, namaBarang, hargaBarang);
+                            final String imageUrl = brg.getImgURL();
+
+                            addBarangToCart(value, imageUrl, namaBarang, hargaBarang);
                             if(value == 1)
                                 Toast.makeText(holder.itemView.getContext(),value.toString() + "x " + brg.getNama()+" has been added to cart", Toast.LENGTH_SHORT).show();
                             else
@@ -232,7 +234,7 @@ public class RecyclerViewAdapterKatalog extends RecyclerView.Adapter<RecyclerVie
                 params.put("nama_barang", namaBarang);
                 params.put("jmlbeli_barang", String.valueOf(value));
                 params.put("harga_barang", hargaBarang);
-                params.put("img_barang", "none"); //TODO: no image
+                params.put("img_barang", gambar);
                 params.put("user_barang", String.valueOf(idUser));
                 params.put("status_barang", "Not Paid");
 

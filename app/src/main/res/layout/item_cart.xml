@@ -24,7 +24,6 @@
             android:layout_height="100dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            app:cImage="@{cart.imgUrlC}"
             app:civ_border_color="#009688"
             app:civ_border_width="2dp"
             app:layout_constraintStart_toStartOf="parent"

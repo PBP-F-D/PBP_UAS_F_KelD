@@ -88,8 +88,9 @@ public class RecyclerViewAdapterCart extends RecyclerView.Adapter< RecyclerViewA
         cart.setTotalB(cart.getHargaB() * cart.getJumlahB());
         holder.txtTotal.setText(String.valueOf(cart.getTotalB()));
 
+
         Glide.with(context)
-                .load(CartAPI.URL_IMAGE+cart.getImgUrlC())
+                .load(cart.getImgUrlC())
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
                 .into(holder.ivImage);
