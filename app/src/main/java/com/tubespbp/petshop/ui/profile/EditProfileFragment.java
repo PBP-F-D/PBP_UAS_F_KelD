@@ -293,8 +293,11 @@ public class EditProfileFragment extends Fragment {
                 city.setText(sCity);
                 country.setText(sCountry);
 
+                String url = "http://nugaskuy.site/storage/" + sImage;
+                System.out.println("url gambar " + url);
+
                 Glide.with(getContext())
-                        .load(sImage)
+                        .load(url)
                         .into(image);
             }
 
