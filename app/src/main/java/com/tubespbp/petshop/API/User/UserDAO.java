@@ -15,7 +15,7 @@ public class UserDAO {
     @SerializedName("phone")
     private String phone;
 
-    @SerializedName("photo")
+    @SerializedName("img_user")
     private String photo;
 
     @SerializedName("city")

@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.textview.MaterialTextView;
 import com.tubespbp.petshop.API.ApiClient;
 import com.tubespbp.petshop.API.ApiInterface;
@@ -151,9 +152,12 @@ public class ProfileFragment extends Fragment {
                 city.setText(sCity);
                 country.setText(sCountry);
 
-//                Glide.with(getContext())
-//                        .load(Uri.parse(sImage))
-//                        .into(image);
+                Glide.with(getContext())
+                        .load(sImage)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                        .into(image);
+
             }
 
             @Override
