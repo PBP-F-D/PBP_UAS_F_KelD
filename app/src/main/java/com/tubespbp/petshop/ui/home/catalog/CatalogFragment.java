@@ -174,7 +174,7 @@ public class CatalogFragment extends Fragment {
                                     ListBarang.add(barang);
                                 break;
                             case "Other":
-                                if(barang.getKategori().equals("Other"))
+                                if(barang.getKategori().equals("Others"))
                                     ListBarang.add(barang);
                                 break;
                             default:
