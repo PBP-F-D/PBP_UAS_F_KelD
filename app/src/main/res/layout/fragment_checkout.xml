@@ -113,7 +113,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/raleway_bold"
-                        android:text="@{user.fullName}"
                         tools:text="Full Name"
                         android:layout_marginLeft="20dp"
                         android:textSize="18sp"

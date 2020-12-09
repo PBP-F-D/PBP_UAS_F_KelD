@@ -131,9 +131,7 @@ public class ProfileFragment extends Fragment {
         return root;
     }
 
-    private void loadUser()
-    {
-
+    private void loadUser() {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
         Call<UserResponse> load = apiService.getUser("Bearer " + token);
         load.enqueue(new Callback<UserResponse>()

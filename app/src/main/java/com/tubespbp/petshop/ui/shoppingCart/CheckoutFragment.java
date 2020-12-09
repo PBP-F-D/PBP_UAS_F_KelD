@@ -1,6 +1,7 @@
 package com.tubespbp.petshop.ui.shoppingCart;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,6 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
+import com.tubespbp.petshop.API.ApiClient;
+import com.tubespbp.petshop.API.ApiInterface;
+import com.tubespbp.petshop.API.User.UserResponse;
 import com.tubespbp.petshop.Constant;
 import com.tubespbp.petshop.MainActivity;
 import com.tubespbp.petshop.R;
@@ -31,6 +35,10 @@ import com.tubespbp.petshop.ui.shoppingCart.model.Cart;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CheckoutFragment extends Fragment {
     private static final String KEY_ARRAY = "arraylist";
@@ -46,6 +54,7 @@ public class CheckoutFragment extends Fragment {
     SharedPreferences shared;
     private List<User> userList;
     int idUser;
+    String sName, token;
 
     Constant constant;
     SharedPreferences.Editor editor;
@@ -96,12 +105,18 @@ public class CheckoutFragment extends Fragment {
             total += cartList.get(i).getTotalB();
         }
         totalprice.setText(Double.toString(total));
+        customername = view.findViewById(R.id.tv_customername);
 
+        Intent i = getActivity().getIntent();
+        sName = i.getStringExtra("name");
 
         //Get sharepreferences for ID user
         shared = getActivity().getSharedPreferences("getId", Context.MODE_PRIVATE);
         idUser = shared.getInt("idUser", -1);
+        token = shared.getString("token", null);
         getUsers();
+
+        customername.setText(sName);
 
         recyclerView = checkoutBinding.rvCheckout;
 
@@ -145,52 +160,25 @@ public class CheckoutFragment extends Fragment {
     }
 
     private void getUsers(){
-        class GetUsers extends AsyncTask<Void, Void, List<User>> {
-
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        Call<UserResponse> load = apiService.getUser("Bearer " + token);
+        load.enqueue(new Callback<UserResponse>()
+        {
             @Override
-            protected List<User> doInBackground(Void... voids) {
-                userList = DatabaseClientUser
-                        .getInstance(getActivity().getApplicationContext())
-                        .getDatabaseUser()
-                        .signUpDAO()
-                        .getUser(idUser);
-                return userList;
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                sName = response.body().getUsers().getName();
+                customername.setText(sName);
             }
 
             @Override
-            protected void onPostExecute(List<User> users) {
-                super.onPostExecute(users);
-                if (users.isEmpty()){
-                    Toast.makeText(getActivity(), "No logged-in user", Toast.LENGTH_SHORT).show();
-                } else {
-                    checkoutBinding.setUser(userList.get(0));
-                }
+            public void onFailure(Call<UserResponse> call, Throwable t) {
+                Toast.makeText(getContext(), "Kesalahan Jaringan", Toast.LENGTH_SHORT).show();
             }
-        }
-        GetUsers get = new GetUsers();
-        get.execute();
+        });
     }
 
     private void deleteData(final Cart cart){
-//        class DeleteItem extends AsyncTask<Void, Void, Void> {
-//
-//            @Override
-//            protected Void doInBackground(Void... voids) {
-//                DatabaseClient.getInstance(getContext())
-//                        .getDatabase()
-//                        .userDAO()
-//                        .delete(cart);
-//                return null;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(Void aVoid) {
-//                super.onPostExecute(aVoid);
-//            }
-//        }
-//
-//        DeleteItem delete = new DeleteItem();
-//        delete.execute();
+
     }
 
 }
