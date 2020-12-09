@@ -54,6 +54,7 @@ public class AdminActivity extends AppCompatActivity {
                             shared = getSharedPreferences("getId", Activity.MODE_PRIVATE);
                             SharedPreferences.Editor editor = shared.edit();
                             editor.putInt("idUser", -1);
+
                             System.out.println("id user abis logout" + shared.getInt("idUser", -1));
 
                             intent = new Intent(getApplicationContext(), LoginActivity.class);

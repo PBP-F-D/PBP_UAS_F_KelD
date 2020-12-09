@@ -139,7 +139,7 @@ public class AddCatalogFragment extends Fragment {
         final ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("loading....");
-        progressDialog.setTitle("Menambahkan data mahasiswa");
+        progressDialog.setTitle("Adding a product");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.show();
 

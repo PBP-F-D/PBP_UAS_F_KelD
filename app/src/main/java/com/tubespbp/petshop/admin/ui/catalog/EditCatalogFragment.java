@@ -179,7 +179,7 @@ public class EditCatalogFragment extends Fragment {
         final ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("loading....");
-        progressDialog.setTitle("Edit a product");
+        progressDialog.setTitle("Editing a product");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.show();
 

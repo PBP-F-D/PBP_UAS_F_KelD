@@ -240,7 +240,7 @@ public class SignUpActivity extends AppCompatActivity {
         final String countrySign = country.getText().toString();
 
         //Input Sign Up Exception
-        if (stringImage == "") {
+        if (imgUri == null) {
             Toast.makeText(this, "Upload your image", Toast.LENGTH_SHORT).show();
         }
         if (emailSign.isEmpty()) emailLayout.setError("Please enter your email");
@@ -262,7 +262,7 @@ public class SignUpActivity extends AppCompatActivity {
         if (countrySign.isEmpty()) countryLayout.setError("Please enter your country");
         else countryLayout.setError(null);
 
-        if (stringImage != "" && isEmailValid(emailSign) && !emailSign.isEmpty() && !nameSign.isEmpty() && !passSign.isEmpty()
+        if (imgUri != null && isEmailValid(emailSign) && !emailSign.isEmpty() && !nameSign.isEmpty() && !passSign.isEmpty()
                 && !phoneSign.isEmpty() && !citySign.isEmpty() && !countrySign.isEmpty()) {
 
             progressDialog.setMessage("Processing....");

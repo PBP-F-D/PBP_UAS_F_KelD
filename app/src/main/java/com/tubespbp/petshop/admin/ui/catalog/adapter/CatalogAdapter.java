@@ -167,7 +167,7 @@ public class CatalogAdapter extends RecyclerView.Adapter<CatalogAdapter.KatalogV
         final ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("loading....");
-        progressDialog.setTitle("Delete a product");
+        progressDialog.setTitle("Deleting a product");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.show();
 
