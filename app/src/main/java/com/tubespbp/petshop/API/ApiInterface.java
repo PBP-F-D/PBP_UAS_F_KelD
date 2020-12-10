@@ -14,11 +14,6 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiInterface {
-
-//    TODO: No Route (add 'Auth::user()->all()' in api) |admin
-//    @GET("user")
-//    Call<UserResponse> getAllUser();
-
     @GET("detailuser")
     Call<UserResponse> getUser(@Header("Authorization") String authToken);
 
@@ -53,6 +48,4 @@ public interface ApiInterface {
                                   @Field("phone") String phone,
                                   @Field("img_user") String img_user,
                                   @Header("Authorization") String authToken);
-//    @POST("user/delete/{id}")
-//    Call<UserResponse> deleteUser(@Path("id")String id);
 }

@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
         themeColor = appColor;
         constant.color = appColor;
 
-//            progressDialog = new ProgressDialog(this);
 
         if (themeColor == 0){
             setTheme(Constant.theme);
@@ -83,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
                     R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
                     .build();
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-    //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
             NavigationUI.setupWithNavController(navView, navController);
 
             //PUSH NOTIFICATION WITH FIREBASE
@@ -135,13 +133,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void logout() {
+        progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Logging Out....");
         progressDialog.setProgressStyle(android.app.ProgressDialog.STYLE_SPINNER);
         progressDialog.show();
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
         Call<UserResponse> logout = apiService.logout("Bearer " + token);
-        System.out.println("Masuk call response");
 
         logout.enqueue(new Callback<UserResponse>() {
             @Override
@@ -153,9 +151,7 @@ public class MainActivity extends AppCompatActivity {
                     editor.putInt("idUser", -1);
                     editor.putString("token", null);
                     editor.apply();
-                    Log.d("Id USER LOG OUT", String.valueOf(idUser));
                     Toast.makeText(MainActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
-                    System.out.println("Masuk on response logout");
                     progressDialog.dismiss();
 
                     Intent moveToLogin = new Intent(getApplicationContext(), LoginActivity.class);

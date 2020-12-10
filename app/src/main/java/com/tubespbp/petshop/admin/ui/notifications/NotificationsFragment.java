@@ -107,17 +107,15 @@ public class NotificationsFragment extends Fragment {
                         //Mengubah data jsonArray tertentu menjadi json Object
                         JSONObject jsonObject = (JSONObject) jsonArray.get(i);
 
-                        String id                = jsonObject.optString("user_barang");
-                        String nama              = jsonObject.optString("nama_barang");
-                        double harga             = jsonObject.optDouble("tharga_barang");
-                        int jml                 = jsonObject.optInt("jmlbeli_barang");
-                        String status           = jsonObject.optString("status_barang");
-                        String gambar           = jsonObject.optString("img_barang");
+                        String idCart       = jsonObject.optString("id");
+                        String userbarang   = jsonObject.optString("user_barang");
+                        String namaBarang   = jsonObject.optString("nama_barang");
+                        Double hargaBarang  = jsonObject.optDouble("harga_barang");
+                        Integer jumlah      = jsonObject.optInt("jmlbeli_barang");
+                        String statusBarang = jsonObject.optString("status_barang");
+                        String gambar       = jsonObject.optString("img_barang");
 
-                        //Membuat objek user
-                        Cart cart = new Cart(id, nama, jml, harga, status, gambar);
-
-                        //Menambahkan objek user tadi ke list user
+                        Cart cart = new Cart(Integer.parseInt(idCart), userbarang, namaBarang, hargaBarang, jumlah, statusBarang, gambar);
                         listCart.add(cart);
                     }
                     adapter.notifyDataSetChanged();

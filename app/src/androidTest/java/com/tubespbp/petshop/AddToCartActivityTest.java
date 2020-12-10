@@ -39,36 +39,6 @@ public class AddToCartActivityTest {
 
     @Test
     public void addToCartActivityTest() {
-//        ViewInteraction textInputEditText = onView(
-//                allOf(withId(R.id.ti_login_email),
-//                        childAtPosition(
-//                                childAtPosition(
-//                                        withId(R.id.til_login_email),
-//                                        0),
-//                                1),
-//                        isDisplayed()));
-//        textInputEditText.perform(replaceText("abc@gmail.com"), closeSoftKeyboard());
-//
-//        ViewInteraction textInputEditText2 = onView(
-//                allOf(withId(R.id.ti_login_pass),
-//                        childAtPosition(
-//                                childAtPosition(
-//                                        withId(R.id.til_login_pass),
-//                                        0),
-//                                1),
-//                        isDisplayed()));
-//        textInputEditText2.perform(replaceText("123"), closeSoftKeyboard());
-//
-//        ViewInteraction materialButton = onView(
-//                allOf(withId(R.id.btn_login), withText("Login"),
-//                        childAtPosition(
-//                                childAtPosition(
-//                                        withClassName(is("androidx.core.widget.NestedScrollView")),
-//                                        0),
-//                                3),
-//                        isDisplayed()));
-//        materialButton.perform(click());
-
         ViewInteraction cardView = onView(
                 allOf(withId(R.id.cardDogs),
                         childAtPosition(
@@ -166,7 +136,7 @@ public class AddToCartActivityTest {
         materialButton7.perform(scrollTo(), click());
 
         try {
-            Thread.sleep(3000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -200,6 +170,12 @@ public class AddToCartActivityTest {
                                         0),
                                 3)));
         materialButton9.perform(scrollTo(), click());
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         ViewInteraction bottomNavigationItemView = onView(
                 allOf(withId(R.id.navigation_dashboard), withContentDescription("Cart"),

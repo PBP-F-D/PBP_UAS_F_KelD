@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.tubespbp.petshop.R;
 import com.tubespbp.petshop.admin.API.CatalogAPI;
+import com.tubespbp.petshop.admin.API.UserAPI;
 import com.tubespbp.petshop.admin.ui.catalog.model.Barang;
 import com.tubespbp.petshop.admin.ui.user.model.User;
 
@@ -95,11 +96,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         holder.txtCountry.setText(user.getCountry());
         holder.txtPhone.setText(user.getPhone());
 
-//        Glide.with(context)
-//                .load(user.getImg_user())
-//                .diskCacheStrategy(DiskCacheStrategy.NONE)
-//                .skipMemoryCache(true)
-//                .into(holder.ivFoto);
+        System.out.println(user.getImg_user());
+
+        Glide.with(context)
+                .load(UserAPI.URL_IMAGE + user.getImg_user())
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(holder.ivFoto);
     }
 
     @Override
